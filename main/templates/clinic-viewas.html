@@ -1,0 +1,208 @@
+{% extends "staff_clinic.html" %}
+
+{% block clinic %}
+    <main class="main" role="main">
+
+    <div class="page-panel active" id="panel-schedule">
+        <div class="inner">
+        <div class="ph">
+            <p class="ph-tag">SERVICE 02</p>
+            <h1 class="ph-title">BOOK A CLINIC <span class="acc">APPOINTMENT</span></h1>
+            <p class="ph-sub">Select a service and pick a date. Your appointment slip will be generated automatically.</p>
+        </div>
+
+        <div class="steps" role="list">
+            <div class="step cur" id="s1" role="listitem"><div class="sn">1</div><span class="sl">SERVICE</span></div>
+            <div class="step-line"></div>
+            <div class="step next" id="s2" role="listitem"><div class="sn">2</div><span class="sl">SCHEDULE</span></div>
+            <div class="step-line"></div>
+            <div class="step next" id="s3" role="listitem"><div class="sn">3</div><span class="sl">CONFIRM</span></div>
+        </div>
+
+        <div class="page-grid">
+            <div>
+            <p class="section-label">STEP 1 — SELECT A SERVICE</p>
+            <div class="service-grid" role="group" aria-label="Select appointment service">
+                <div class="service-card" id="card-checkup"
+                    onclick="selectService('checkup')" role="button" aria-pressed="false" tabindex="0">
+                <span class="sc-check" aria-hidden="true">✓</span>
+                <span class="sc-icon" aria-hidden="true">🩺</span>
+                <h2 class="sc-title">PHYSICAL<br/>CHECK-UP</h2>
+                <p class="sc-desc">General health check conducted by the campus nurse. Required for enrollment and clearance.</p>
+                <span class="sc-duration">⏱ EST. 20–30 MIN</span>
+                </div>
+                <div class="service-card" id="card-records"
+                    onclick="selectService('records')" role="button" aria-pressed="false" tabindex="0">
+                <span class="sc-check" aria-hidden="true">✓</span>
+                <span class="sc-icon" aria-hidden="true">📁</span>
+                <h2 class="sc-title">MEDICAL RECORD<br/>PROCESSING</h2>
+                <p class="sc-desc">Request official medical certificates, health clearance documents, or past medical records.</p>
+                <span class="sc-duration">⏱ EST. 10–15 MIN</span>
+                </div>
+            </div>
+
+            <p class="section-label">STEP 2 — PICK A DATE</p>
+            <div class="cal-wrap" aria-label="Appointment date calendar">
+                <div class="cal-header">
+                <button class="cal-nav" onclick="changeMonth(-1)" aria-label="Previous month">‹</button>
+                <span class="cal-month" id="calMonth" aria-live="polite">—</span>
+                <button class="cal-nav" onclick="changeMonth(1)" aria-label="Next month">›</button>
+                </div>
+                <div class="cal-grid" role="grid" aria-label="Calendar days">
+                <div class="cal-dow">SUN</div><div class="cal-dow">MON</div><div class="cal-dow">TUE</div>
+                <div class="cal-dow">WED</div><div class="cal-dow">THU</div><div class="cal-dow">FRI</div>
+                <div class="cal-dow">SAT</div>
+                </div>
+            </div>
+
+            <div class="time-section" id="timeSection" style="display:none;">
+                <p class="section-label">STEP 3 — CHOOSE A TIME SLOT</p>
+                <div class="time-grid" id="timeGrid" role="group" aria-label="Available time slots"></div>
+            </div>
+            </div>
+
+            <div class="sum-panel" aria-label="Booking summary">
+            <div class="sum-header"><h2 class="sum-title">YOUR BOOKING</h2></div>
+            <div class="sum-body" id="sumBody">
+                <div class="sum-empty">
+                <div class="se-icon" aria-hidden="true">📅</div>
+                <p class="se-text">SELECT A SERVICE<br/>AND DATE TO BEGIN</p>
+                </div>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+
+
+    <div class="page-panel" id="panel-slip">
+        <div class="inner" style="max-width:900px;">
+        <div class="suc-banner no-print" role="alert" aria-live="polite">
+            <div class="suc-icon" aria-hidden="true">✓</div>
+            <div>
+            <p class="suc-title">APPOINTMENT CONFIRMED!</p>
+            <p class="suc-sub">Your appointment has been saved. Print your slip and bring it to the campus clinic on your scheduled date.</p>
+            </div>
+        </div>
+
+        <div class="conf-grid">
+            <div class="slip-card" aria-label="Appointment slip">
+            <div class="slip-card-header no-print">
+                <h1 class="sch-title">APPOINTMENT SLIP</h1>
+                <span class="sch-id" id="apptIdDisplay">APPT #—</span>
+            </div>
+            <div class="printable">
+                <div class="slip-header">
+                <div class="sh-logo">
+                    <div class="sh-hex" aria-hidden="true">GO</div>
+                    <div class="sh-org">
+                    LSPU NAVGO
+                    <span>Laguna State Polytechnic University</span>
+                    <span>Campus Clinic — Appointment Slip</span>
+                    </div>
+                </div>
+                <div class="sh-right">
+                    <p class="sh-doc-label">APPOINTMENT ID</p>
+                    <p class="sh-appt-id" id="formApptId">APPT #—</p>
+                    <div class="sh-badge"><div class="sh-dot" aria-hidden="true"></div>CONFIRMED</div>
+                </div>
+                </div>
+
+                <div class="info-grid">
+                <div class="info-block">
+                    <p class="ib-label">STUDENT ID NUMBER</p>
+                    <p class="ib-val" id="slipStudentId">{{ student.user_id|default:"—" }}</p>
+                </div>
+                <div class="info-block">
+                    <p class="ib-label">STUDENT NAME</p>
+                    <p class="ib-val" id="slipStudentName">{{ student.username|default:"—" }}</p>
+                </div>
+                <div class="info-block">
+                    <p class="ib-label">DATE BOOKED</p>
+                    <p class="ib-val" id="bookedDate">—</p>
+                </div>
+                <div class="info-block">
+                    <p class="ib-label">CLINIC LOCATION</p>
+                    <p class="ib-val">Campus Health Center</p>
+                </div>
+                </div>
+
+                <div class="appt-strip">
+                <div class="as-item">
+                    <span class="as-icon" aria-hidden="true">🩺</span>
+                    <div><p class="as-label">SERVICE</p><p class="as-val" id="slipService">—</p></div>
+                </div>
+                <div class="as-item">
+                    <span class="as-icon" aria-hidden="true">📅</span>
+                    <div><p class="as-label">DATE</p><p class="as-val" id="slipDate">—</p></div>
+                </div>
+                <div class="as-item">
+                    <span class="as-icon" aria-hidden="true">⏰</span>
+                    <div><p class="as-label">TIME</p><p class="as-val" id="slipTime">—</p></div>
+                </div>
+                </div>
+
+                <div class="nurse-section" aria-label="Nurse notes section">
+                <div class="ns-header">
+                    <p class="ns-label">FOR CLINIC STAFF USE ONLY</p>
+                    <span class="ns-chip">DO NOT FILL BEFORE ARRIVAL</span>
+                </div>
+                <div class="ns-fields">
+                    <div class="ns-field"><span class="ns-field-label">Attending nurse / staff:</span><div class="ns-line"></div></div>
+                    <div class="ns-field"><span class="ns-field-label">Actual time in:</span><div class="ns-line"></div></div>
+                    <div class="ns-field"><span class="ns-field-label">Temperature / BP:</span><div class="ns-line"></div></div>
+                    <div class="ns-field"><span class="ns-field-label">Signature:</span><div class="ns-line"></div></div>
+                </div>
+                <div class="ns-notes-area">
+                    <p class="ns-notes-label">Nurse's notes / findings:</p>
+                    <div class="ns-notes-box" aria-label="Blank nurse notes area"></div>
+                </div>
+                </div>
+
+                <div class="slip-footer">
+                <div>
+                    <p class="sf-text">LSPU NAVGO — VIRTUAL STUDENT HUB</p>
+                    <p class="sf-text">GENERATED: <span id="genTs">—</span></p>
+                    <p class="sf-text">BRING THIS SLIP AND YOUR SCHOOL ID ON THE DAY.</p>
+                </div>
+                <div class="qr-box" aria-label="QR code placeholder">📱</div>
+                </div>
+            </div>
+            </div>
+
+            <div class="action-panel no-print" aria-label="Actions">
+            <h2 class="ap-title">NEXT STEPS</h2>
+            <div class="action-btns">
+                <button class="btn btn-lime" onclick="window.print()"><span class="sh"></span>🖨 PRINT SLIP</button>
+                <button class="btn btn-primary" onclick="window.print()"><span class="sh"></span>📄 EXPORT PDF</button>
+                <button class="btn btn-ghost"
+                        onclick="window.location.href='{% url 'dashboard' %}#records'">
+                📋 VIEW IN RECORDS
+                </button>
+            </div>
+            <div class="ap-div"></div>
+            <div class="ins-list" role="list">
+                <div class="ins-item" role="listitem"><div class="ins-num">1</div><p class="ins-text">Print or save this appointment slip.</p></div>
+                <div class="ins-item" role="listitem"><div class="ins-num">2</div><p class="ins-text">Arrive at the Campus Health Center on your scheduled date and time.</p></div>
+                <div class="ins-item" role="listitem"><div class="ins-num">3</div><p class="ins-text">Present this slip and your school ID at the clinic counter.</p></div>
+                <div class="ins-item" role="listitem"><div class="ins-num">4</div><p class="ins-text">The nurse will fill in their notes during your visit.</p></div>
+            </div>
+            <div class="ap-div"></div>
+            <div class="nlinks">
+                <a href="#" class="nlink" onclick="resetAndSchedule();return false;">
+                <span class="nl-icon">🏥</span><span class="nl-text">BOOK ANOTHER APPOINTMENT</span>
+                </a>
+                <a href="{% url 'dashboard' %}" class="nlink">
+                <span class="nl-icon">⬛</span><span class="nl-text">BACK TO DASHBOARD</span>
+                </a>
+                <a href="{% url 'bao' %}" class="nlink">
+                <span class="nl-icon">🛒</span><span class="nl-text">VISIT BAO OFFICE</span>
+                </a>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+    </main>
+{% endblock clinic %}

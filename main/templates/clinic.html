@@ -1,0 +1,295 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>LSPU NavGO | Clinic</title>
+<link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+<link rel="stylesheet" href="{% static 'css/navgo.css' %}"/>
+<link rel="stylesheet" href="{% static 'css/clinic.css' %}"/>
+</head>
+
+<body
+  data-student-id="{{ student.user_id|default:'' }}"
+  data-student-name="{{ student.username|default:'' }}"
+  data-student-sec="{{ student.section|default:'' }}">
+
+<nav class="topnav" role="navigation" aria-label="Main navigation">
+  <a href="{% url 'dashboard' %}" class="nav-logo" aria-label="LSPU NAVGO home">
+    <div class="logo-hex" aria-hidden="true">
+      <img src="{% static 'img/small-logo.png' %}" width="34px" height="auto" alt="logo"> 
+    </div>
+    <div><div class="logo-name">LSPU NAVGO</div><div class="logo-sub">Virtual Student Hub</div></div>
+  </a>
+  <div class="nav-r">
+    <div class="nav-user">
+      <div class="nav-avatar" aria-hidden="true" {% if student.profile_picture_b64 %}style="background-image: url('{{ student.profile_picture_b64 }}'); background-size: cover; background-position: center; color: transparent;"{% endif %}>{{ student.username|slice:":1"|upper|default:"S" }}</div>
+      <span class="nav-uname">{{ student.username|upper|default:"STUDENT" }}</span>
+    </div>
+    <div class="notif-wrap" id="notifWrap">
+     <button class="notif-btn" id="notifBtn"
+             aria-label="Notifications" aria-expanded="false"
+             aria-haspopup="true">
+       🔔
+       <span class="notif-badge" id="notifBadge" aria-live="polite"></span>
+     </button>
+     
+     <div class="notif-dropdown" id="notifDropdown" role="menu">
+       <div class="notif-header">
+         <span class="notif-header-title">NOTIFICATIONS</span>
+         <button class="notif-mark-all" id="notifMarkAll">MARK ALL READ</button>
+       </div>
+       <div class="notif-list" id="notifList"></div>
+       <div class="notif-footer">
+         <a href="#" class="notif-footer-link">ALL CAUGHT UP</a>
+       </div>
+     </div>
+   </div>
+
+    <button class="nav-btn" id="themeToggle" aria-label="Toggle theme">◑</button>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<aside class="sidebar" id="sidebar" role="navigation" aria-label="Sidebar navigation">
+  <div class="sb-section">
+    <p class="sb-label">STUDENT</p>
+    <a href="{% url 'dashboard' %}" class="sb-link"><span class="sb-icon">⬛</span> DASHBOARD</a>
+    <a href="{% url 'dashboard' %}#profile" class="sb-link"><span class="sb-icon">👤</span> MY PROFILE</a>
+    <a href="{% url 'dashboard' %}#records" class="sb-link"><span class="sb-icon">📋</span> MY RECORDS</a>
+  </div>
+  <div class="divider"></div>
+  <div class="sb-section">
+    <p class="sb-label">SERVICES</p>
+    <a href="{% url 'bao' %}" class="sb-link"><span class="sb-icon">🛒</span> BAO</a>
+    <a href="{% url 'clinic' %}" class="sb-link active" aria-current="page"><span class="sb-icon">🏥</span> CLINIC</a>
+    <a href="{% url 'student_center' %}" class="sb-link"><span class="sb-icon">🏪</span> STUDENT CENTER</a>
+  </div>
+  <div class="divider"></div>
+  <div class="sb-section">
+    <p class="sb-label">NAVIGATION</p>
+    <a href="{% url 'game' %}" class="sb-link"><span class="sb-icon">🗺️</span> CHANGE PATH</a>
+  </div>
+  <div class="sb-bottom">
+    <a href="{% url 'login' %}" class="sb-link"><span class="sb-icon">⏏</span> LOG OUT</a>
+  </div>
+</aside>
+
+<main class="main" role="main">
+
+
+  <div class="page-panel active" id="panel-schedule">
+    <div class="inner">
+      <div class="ph">
+        <p class="ph-tag">SERVICE 02</p>
+        <h1 class="ph-title">BOOK A CLINIC <span class="acc">APPOINTMENT</span></h1>
+        <p class="ph-sub">Select a service and pick a date. Your appointment slip will be generated automatically.</p>
+      </div>
+
+      <div class="steps" role="list">
+        <div class="step cur" id="s1" role="listitem"><div class="sn">1</div><span class="sl">SERVICE</span></div>
+        <div class="step-line"></div>
+        <div class="step next" id="s2" role="listitem"><div class="sn">2</div><span class="sl">SCHEDULE</span></div>
+        <div class="step-line"></div>
+        <div class="step next" id="s3" role="listitem"><div class="sn">3</div><span class="sl">CONFIRM</span></div>
+      </div>
+
+      <div class="page-grid">
+        <div>
+          <p class="section-label">STEP 1 — SELECT A SERVICE</p>
+          <div class="service-grid" role="group" aria-label="Select appointment service">
+            <div class="service-card" id="card-checkup"
+                 onclick="selectService('checkup')" role="button" aria-pressed="false" tabindex="0">
+              <span class="sc-check" aria-hidden="true">✓</span>
+              <span class="sc-icon" aria-hidden="true">🩺</span>
+              <h2 class="sc-title">PHYSICAL<br/>CHECK-UP</h2>
+              <p class="sc-desc">General health check conducted by the campus nurse. Required for enrollment and clearance.</p>
+              <span class="sc-duration">⏱ EST. 20–30 MIN</span>
+            </div>
+            <div class="service-card" id="card-records"
+                 onclick="selectService('records')" role="button" aria-pressed="false" tabindex="0">
+              <span class="sc-check" aria-hidden="true">✓</span>
+              <span class="sc-icon" aria-hidden="true">📁</span>
+              <h2 class="sc-title">MEDICAL RECORD<br/>PROCESSING</h2>
+              <p class="sc-desc">Request official medical certificates, health clearance documents, or past medical records.</p>
+              <span class="sc-duration">⏱ EST. 10–15 MIN</span>
+            </div>
+          </div>
+
+          <p class="section-label">STEP 2 — PICK A DATE</p>
+          <div class="cal-wrap" aria-label="Appointment date calendar">
+            <div class="cal-header">
+              <button class="cal-nav" onclick="changeMonth(-1)" aria-label="Previous month">‹</button>
+              <span class="cal-month" id="calMonth" aria-live="polite">—</span>
+              <button class="cal-nav" onclick="changeMonth(1)" aria-label="Next month">›</button>
+            </div>
+            <div class="cal-grid" role="grid" aria-label="Calendar days">
+              <div class="cal-dow">SUN</div><div class="cal-dow">MON</div><div class="cal-dow">TUE</div>
+              <div class="cal-dow">WED</div><div class="cal-dow">THU</div><div class="cal-dow">FRI</div>
+              <div class="cal-dow">SAT</div>
+            </div>
+          </div>
+
+          <div class="time-section" id="timeSection" style="display:none;">
+            <p class="section-label">STEP 3 — CHOOSE A TIME SLOT</p>
+            <div class="time-grid" id="timeGrid" role="group" aria-label="Available time slots"></div>
+          </div>
+        </div>
+
+        <div class="sum-panel" aria-label="Booking summary">
+          <div class="sum-header"><h2 class="sum-title">YOUR BOOKING</h2></div>
+          <div class="sum-body" id="sumBody">
+            <div class="sum-empty">
+              <div class="se-icon" aria-hidden="true">📅</div>
+              <p class="se-text">SELECT A SERVICE<br/>AND DATE TO BEGIN</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="page-panel" id="panel-slip">
+    <div class="inner" style="max-width:900px;">
+      <div class="suc-banner no-print" role="alert" aria-live="polite">
+        <div class="suc-icon" aria-hidden="true">✓</div>
+        <div>
+          <p class="suc-title">APPOINTMENT CONFIRMED!</p>
+          <p class="suc-sub">Your appointment has been saved. Print your slip and bring it to the campus clinic on your scheduled date.</p>
+        </div>
+      </div>
+
+      <div class="conf-grid">
+        <div class="slip-card" aria-label="Appointment slip">
+          <div class="slip-card-header no-print">
+            <h1 class="sch-title">APPOINTMENT SLIP</h1>
+            <span class="sch-id" id="apptIdDisplay">APPT #—</span>
+          </div>
+          <div class="printable">
+            <div class="slip-header">
+              <div class="sh-logo">
+                <div class="sh-hex" aria-hidden="true">GO</div>
+                <div class="sh-org">
+                  LSPU NAVGO
+                  <span>Laguna State Polytechnic University</span>
+                  <span>Campus Clinic — Appointment Slip</span>
+                </div>
+              </div>
+              <div class="sh-right">
+                <p class="sh-doc-label">APPOINTMENT ID</p>
+                <p class="sh-appt-id" id="formApptId">APPT #—</p>
+                <div class="sh-badge"><div class="sh-dot" aria-hidden="true"></div>CONFIRMED</div>
+              </div>
+            </div>
+
+            <div class="info-grid">
+              <div class="info-block">
+                <p class="ib-label">STUDENT ID NUMBER</p>
+                <p class="ib-val" id="slipStudentId">{{ student.user_id|default:"—" }}</p>
+              </div>
+              <div class="info-block">
+                <p class="ib-label">STUDENT NAME</p>
+                <p class="ib-val" id="slipStudentName">{{ student.username|default:"—" }}</p>
+              </div>
+              <div class="info-block">
+                <p class="ib-label">DATE BOOKED</p>
+                <p class="ib-val" id="bookedDate">—</p>
+              </div>
+              <div class="info-block">
+                <p class="ib-label">CLINIC LOCATION</p>
+                <p class="ib-val">Campus Health Center</p>
+              </div>
+            </div>
+
+            <div class="appt-strip">
+              <div class="as-item">
+                <span class="as-icon" aria-hidden="true">🩺</span>
+                <div><p class="as-label">SERVICE</p><p class="as-val" id="slipService">—</p></div>
+              </div>
+              <div class="as-item">
+                <span class="as-icon" aria-hidden="true">📅</span>
+                <div><p class="as-label">DATE</p><p class="as-val" id="slipDate">—</p></div>
+              </div>
+              <div class="as-item">
+                <span class="as-icon" aria-hidden="true">⏰</span>
+                <div><p class="as-label">TIME</p><p class="as-val" id="slipTime">—</p></div>
+              </div>
+            </div>
+
+            <div class="nurse-section" aria-label="Nurse notes section">
+              <div class="ns-header">
+                <p class="ns-label">FOR CLINIC STAFF USE ONLY</p>
+                <span class="ns-chip">DO NOT FILL BEFORE ARRIVAL</span>
+              </div>
+              <div class="ns-fields">
+                <div class="ns-field"><span class="ns-field-label">Attending nurse / staff:</span><div class="ns-line"></div></div>
+                <div class="ns-field"><span class="ns-field-label">Actual time in:</span><div class="ns-line"></div></div>
+                <div class="ns-field"><span class="ns-field-label">Temperature / BP:</span><div class="ns-line"></div></div>
+                <div class="ns-field"><span class="ns-field-label">Signature:</span><div class="ns-line"></div></div>
+              </div>
+              <div class="ns-notes-area">
+                <p class="ns-notes-label">Nurse's notes / findings:</p>
+                <div class="ns-notes-box" aria-label="Blank nurse notes area"></div>
+              </div>
+            </div>
+
+            <div class="slip-footer">
+              <div>
+                <p class="sf-text">LSPU NAVGO — VIRTUAL STUDENT HUB</p>
+                <p class="sf-text">GENERATED: <span id="genTs">—</span></p>
+                <p class="sf-text">BRING THIS SLIP AND YOUR SCHOOL ID ON THE DAY.</p>
+              </div>
+              <div class="qr-box" aria-label="QR code placeholder">📱</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-panel no-print" aria-label="Actions">
+          <h2 class="ap-title">NEXT STEPS</h2>
+          <div class="action-btns">
+            <button class="btn btn-lime" onclick="window.print()"><span class="sh"></span>🖨 PRINT SLIP</button>
+            <button class="btn btn-primary" onclick="window.print()"><span class="sh"></span>📄 EXPORT PDF</button>
+            <button class="btn btn-ghost"
+                    onclick="window.location.href='{% url 'dashboard' %}#records'">
+              📋 VIEW IN RECORDS
+            </button>
+          </div>
+          <div class="ap-div"></div>
+          <div class="ins-list" role="list">
+            <div class="ins-item" role="listitem"><div class="ins-num">1</div><p class="ins-text">Print or save this appointment slip.</p></div>
+            <div class="ins-item" role="listitem"><div class="ins-num">2</div><p class="ins-text">Arrive at the Campus Health Center on your scheduled date and time.</p></div>
+            <div class="ins-item" role="listitem"><div class="ins-num">3</div><p class="ins-text">Present this slip and your school ID at the clinic counter.</p></div>
+            <div class="ins-item" role="listitem"><div class="ins-num">4</div><p class="ins-text">The nurse will fill in their notes during your visit.</p></div>
+          </div>
+          <div class="ap-div"></div>
+          <div class="nlinks">
+            <a href="#" class="nlink" onclick="resetAndSchedule();return false;">
+              <span class="nl-icon">🏥</span><span class="nl-text">BOOK ANOTHER APPOINTMENT</span>
+            </a>
+            <a href="{% url 'dashboard' %}" class="nlink">
+              <span class="nl-icon">⬛</span><span class="nl-text">BACK TO DASHBOARD</span>
+            </a>
+            <a href="{% url 'bao' %}" class="nlink">
+              <span class="nl-icon">🛒</span><span class="nl-text">VISIT BAO OFFICE</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+{% include "includes/messages.html" %}
+
+<script src="{% static 'js/navgo.js' %}"></script>
+<script src="{% static 'js/clinic.js' %}"></script>
+
+</body>
+</html>

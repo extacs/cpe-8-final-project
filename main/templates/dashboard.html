@@ -1,0 +1,404 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>LSPU NAVGO | Dashboard</title>
+<link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+<link rel="stylesheet" href="{% static 'css/navgo.css' %} "/>
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}"/>
+</head>
+<body>
+
+<nav class="topnav" role="navigation" aria-label="Main navigation">
+  <a href="{% url 'dashboard' %}" class="nav-logo" aria-label="LSPU NAVGO home">
+    <div class="logo-hex" aria-hidden="true">
+      <img src="{% static 'img/small-logo.png' %}" width="34px" height="auto" alt="logo"> 
+    </div>
+    <div><div class="logo-name">LSPU NAVGO</div><div class="logo-sub">Virtual Student Hub</div></div>
+  </a>
+  <div class="nav-r">
+    <div class="nav-user">
+      <div class="nav-avatar" aria-hidden="true" {% if student.profile_picture_b64 %}style="background-image: url('{{ student.profile_picture_b64 }}'); background-size: cover; background-position: center; color: transparent;"{% endif %}>{{ student.username|slice:":1"|upper|default:"S" }}</div>
+      <span class="nav-uname">{{ student.username|upper|default:"STUDENT" }}</span>
+    </div>
+
+    <div class="notif-wrap" id="notifWrap">
+      <button class="notif-btn" id="notifBtn"
+        aria-label="Notifications" aria-expanded="false"
+        aria-haspopup="true">
+       🔔
+       <span class="notif-badge" id="notifBadge" aria-live="polite"></span>
+      </button>
+      <div class="notif-dropdown" id="notifDropdown" role="menu">
+        <div class="notif-header">
+          <span class="notif-header-title">NOTIFICATIONS</span>
+          <button class="notif-mark-all" id="notifMarkAll">MARK ALL READ</button>
+        </div>
+        <div class="notif-list" id="notifList"></div>
+        <div class="notif-footer">
+          <a href="#" class="notif-footer-link">ALL CAUGHT UP</a>
+        </div>
+      </div>
+    </div>
+
+    <button class="nav-btn" id="themeToggle" aria-label="Toggle theme">◑</button>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<aside class="sidebar" id="sidebar" role="navigation" aria-label="Sidebar navigation">
+  <div class="sb-section">
+    <p class="sb-label">STUDENT</p>
+    <a href="#" class="sb-link" id="nav-dashboard" onclick="showPage('dashboard');return false;"><span class="sb-icon" aria-hidden="true">⬛</span> DASHBOARD</a>
+    <a href="#" class="sb-link" id="nav-profile" onclick="showPage('profile');return false;"><span class="sb-icon" aria-hidden="true">👤</span> MY PROFILE</a>
+    <a href="#" class="sb-link" id="nav-records" onclick="showPage('records');return false;"><span class="sb-icon" aria-hidden="true">📋</span> MY RECORDS</a>
+  </div>
+  <div class="divider"></div>
+  <div class="sb-section">
+    <p class="sb-label">SERVICES</p>
+    <a href="{% url 'bao' %}" class="sb-link"><span class="sb-icon" aria-hidden="true">🛒</span> BAO</a>
+    <a href="{% url 'clinic' %}" class="sb-link"><span class="sb-icon" aria-hidden="true">🏥</span> CLINIC</a>
+    <a href="{% url 'student_center' %}" class="sb-link"><span class="sb-icon" aria-hidden="true">🏪</span> STUDENT CENTER</a>
+  </div>
+  <div class="divider"></div>
+  <div class="sb-section">
+    <p class="sb-label">NAVIGATION</p>
+    <a href="{% url 'choose_path' %}" class="sb-link"><span class="sb-icon" aria-hidden="true">🗺️</span> CHANGE PATH</a>
+  </div>
+  <div class="sb-bottom">
+    <a href="{% url 'login' %}" class="sb-link"><span class="sb-icon" aria-hidden="true">⏏</span> LOG OUT</a>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="page-panel" id="page-dashboard">
+    <div class="inner">
+      
+      <div class="ph">
+        <p class="ph-tag">STUDENT HUB</p>
+        <h1 class="ph-title">WELCOME BACK,<br/><span class="acc">{{ student.username|upper|default:"STUDENT" }}</span></h1>
+        <p class="ph-sub">Here's what's happening on your campus today.</p>
+      </div>
+      
+      <div class="alert-bar" role="alert" aria-live="polite">
+        {% if stats.bao_active > 0 %}
+          <div class="alert-dot" aria-hidden="true"></div>
+          <span class="alert-text">{{ stats.bao_active }} ACTIVE BAO ORDER{{ stats.bao_active|pluralize|upper }}</span>
+        {% endif %}
+        
+        {% if stats.bao_active > 0 and next_clinic_appt %}
+          <div class="alert-sep" aria-hidden="true"></div>
+        {% endif %}
+        
+        {% if next_clinic_appt %}
+          <div class="alert-dot" aria-hidden="true"></div>
+          <span class="alert-text">CLINIC APPOINTMENT: {{ next_clinic_appt.appt_date|date:"M d"|upper }}, {{ next_clinic_appt.time_slot|upper }}</span>
+        {% endif %}
+        
+        {% if stats.bao_active == 0 and not next_clinic_appt %}
+          <span class="alert-text">NO PENDING TASKS OR APPOINTMENTS.</span>
+        {% endif %}
+      </div>
+
+      <div class="tiles" role="group" aria-label="Main modules">
+        <a href="{% url 'bao' %}" class="tile tile-a" aria-label="BAO Office">
+          <div class="tile-visual" aria-hidden="true">🛒</div>
+          <div class="tile-body">
+            <p class="tile-label">BUSINESS AFFAIRS OFFICE</p>
+            <h2 class="tile-title">BAO</h2>
+            <p class="tile-desc">Browse available items, check stock, add to cart, and generate a printable claim form.</p>
+            <button class="tile-cta">▶ OPEN CATALOG</button>
+          </div>
+        </a>
+        <a href="{% url 'clinic' %}" class="tile tile-b" aria-label="Clinic">
+          <div class="tile-visual" aria-hidden="true">🏥</div>
+          <div class="tile-body">
+            <p class="tile-label">HEALTH SERVICES</p>
+            <h2 class="tile-title">CLINIC</h2>
+            <p class="tile-desc">Schedule a physical check-up or request medical records. Get your appointment slip instantly.</p>
+            <button class="tile-cta">▶ BOOK APPOINTMENT</button>
+          </div>
+        </a>
+        <a href="{% url 'student_center' %}" class="tile tile-c" style="grid-column:1/-1;" aria-label="Student Center">
+          <div class="tile-visual" aria-hidden="true">🏪</div>
+          <div class="tile-body">
+            <p class="tile-label">BUY &amp; SELL</p>
+            <h2 class="tile-title">STUDENT CENTER</h2>
+            <p class="tile-desc">Browse listings from fellow students — textbooks, uniforms, merch, and event drops. No hidden fees.</p>
+            <button class="tile-cta">▶ BROWSE LISTINGS</button>
+          </div>
+        </a>
+      </div>
+
+      <div class="bottom-grid">
+        <div class="card" aria-label="Your stats">
+          <h2 class="card-title">YOUR STATS</h2>
+          <div class="stat-row" role="list">
+            <div class="stat-item" role="listitem"><div class="stat-left"><span class="stat-icon">🛒</span><span class="stat-name">TOTAL BAO ORDERS</span></div><span class="stat-val">{{ stats.bao_total }}</span></div>
+            <div class="stat-item" role="listitem"><div class="stat-left"><span class="stat-icon">🏥</span><span class="stat-name">CLINIC VISITS</span></div><span class="stat-val">{{ stats.clinic_total }}</span></div>
+            <div class="stat-item" role="listitem"><div class="stat-left"><span class="stat-icon">📋</span><span class="stat-name">PENDING ITEMS</span></div><span class="stat-val">{{ stats.pending_items }}</span></div>
+            <div class="stat-item" role="listitem"><div class="stat-left"><span class="stat-icon">✅</span><span class="stat-name">COMPLETED</span></div><span class="stat-val">{{ stats.total_completed }}</span></div>
+          </div>
+        </div>
+        
+        <div class="card" aria-label="Recent activity">
+          <h2 class="card-title">RECENT ACTIVITY</h2>
+          <div class="activity-list" role="list">
+            {% for act in recent_activity %}
+              <div class="act-item" role="listitem">
+                <div class="act-dot-wrap">
+                  <div class="act-dot {% if act.status in 'pending,ready,confirmed' %}lime{% elif act.status == 'cancelled' %}warn{% else %}purple{% endif %}"></div>
+                  {% if not forloop.last %}<div class="act-line"></div>{% endif %}
+                </div>
+                <div>
+                  <p class="act-title">{{ act.title }} 
+                    <span class="chip {% if act.status in 'pending,ready,confirmed' %}chip-lime{% elif act.status == 'cancelled' %}chip-warn{% else %}chip-muted{% endif %}">
+                      {{ act.status|upper }}
+                    </span>
+                  </p>
+                  <p class="act-sub">{{ act.desc }}&nbsp;&nbsp;·&nbsp;&nbsp;{% if act.type == 'bao' %}Placed{% else %}Sched:{% endif %} {{ act.display_date }}</p>
+                </div>
+              </div>
+            {% empty %}
+              <p style="color:var(--c-dim); font-size: 0.9em;">No recent activity to show.</p>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  <!-- == (2-Dashb) PROFILE == -->
+  <div class="page-panel" id="page-profile">
+    <div class="inner" style="max-width:860px;">
+      <div class="ph">
+        <p class="ph-tag">ACCOUNT</p>
+        <h1 class="ph-title">MY <span class="acc">PROFILE</span></h1>
+        <p class="ph-sub">Your info is auto-filled into BAO orders and clinic forms so you never have to retype it.</p>
+      </div>
+      <div class="profile-grid">
+        <div class="avatar-card" aria-label="Profile summary">
+          <div class="big-avatar" id="avatarPreview" onclick="document.getElementById('pfpInput').click()" 
+               style="cursor: pointer; transition: 0.2s; {% if student.profile_picture_b64 %}background-image: url('{{ student.profile_picture_b64 }}'); background-size: cover; background-position: center; color: transparent;{% endif %}" 
+               title="Click to upload profile picture">
+            {{ student.username|slice:":1"|upper|default:"S" }}
+            <div class="avatar-badge">🟢</div>
+          </div>
+          
+          <input type="file" id="pfpInput" accept="image/png, image/jpeg, image/webp" style="display: none;" onchange="previewPFP(event)">
+          {% comment %} <p style="font-size: 0.75em; color: var(--c-dim); text-align: center; margin-top: 8px; cursor: pointer;" onclick="document.getElementById('pfpInput').click()">CHANGE PHOTO</p> {% endcomment %}
+
+          <p class="av-name">{{ student.username|upper|default:"STUDENT"}}</p>
+          <p class="av-id">{{ student.user_id | default:"0000-0000"}}</p> 
+          <span class="chip chip-lime">ACTIVE STUDENT</span>
+          <div class="av-meta">
+            <div class="av-meta-row"><span class="av-meta-label">YEAR</span><span class="av-meta-val">{{ student.year_level }} YEAR</span></div>
+            <div class="av-meta-row"><span class="av-meta-label">SECTION</span><span class="av-meta-val">{{ student.section|default:"Not Set" }}</span></div>
+            <div class="av-meta-row"><span class="av-meta-label">BAO ORDERS</span><span class="av-meta-val">{{ stats.bao_total }}</span></div>
+            <div class="av-meta-row"><span class="av-meta-label">CLINIC VISITS</span><span class="av-meta-val">{{ stats.clinic_total }}</span></div>
+          </div>
+        </div>
+        <div class="form-card">
+          <div class="section-head"><h2 class="section-title">STUDENT INFO</h2><span class="section-tag">AUTO-POPULATES FORMS</span></div>
+          
+          {% csrf_token %}
+          
+          <div class="field-row">
+            <div class="field field-locked">
+              <label for="studentId">STUDENT ID NUMBER</label>
+              <input type="text" id="studentId" value="{{ student.user_id | default:"0000-0000"}}" disabled/>
+              <span class="lock-icon" aria-hidden="true">🔒</span>
+              <p class="field-hint">Assigned by the university. Cannot be changed.</p>
+            </div>
+            <div class="field">
+              <label for="yearLevel">YEAR LEVEL</label>
+              <select id="yearLevel">
+                <option value="1" {% if student.year_level == 1 %}selected{% endif %}>1st Year</option>
+                <option value="2" {% if student.year_level == 2 %}selected{% endif %}>2nd Year</option>
+                <option value="3" {% if student.year_level == 3 %}selected{% endif %}>3rd Year</option>
+                <option value="4" {% if student.year_level == 4 %}selected{% endif %}>4th Year</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="course">COURSE / PROGRAM</label>
+              <select id="course">
+                <option value="BSCPE" {% if student.course == 'BSCPE' %}selected{% endif %}>BSCPE</option>
+                <option value="BSEE" {% if student.course == 'BSEE' %}selected{% endif %}>BSEE</option>
+                <option value="BSME" {% if student.course == 'BSME' %}selected{% endif %}>BSME</option>
+                <option value="BSECE" {% if student.course == 'BSECE' %}selected{% endif %}>BSECE</option>
+                <option value="BSCE" {% if student.course == 'BSCE' %}selected{% endif %}>BSCE</option>
+              </select>
+            </div>
+            <div class="field"><label for="section">SECTION</label><input type="text" id="section" value="{{ student.section }}" placeholder="e.g. BSCPE-2B"/></div>
+          </div>
+          
+          <div class="field field-locked">
+            <label for="email">EMAIL ADDRESS</label>
+            <input type="email" id="email" value="{{ student.email | default:"0000-0000"}}" disabled/>
+            <span class="lock-icon" aria-hidden="true">🔒</span>
+            <p class="field-hint">Tied to your login. Change in account security settings. (will be available in the future)</p>
+          </div>
+
+          <div class="privacy-box" role="note">
+            <span class="privacy-icon" aria-hidden="true">🔐</span>
+            <p class="privacy-text"><strong>Privacy note:</strong> Name fields are optional. Your student ID and section are sufficient to process orders and appointments. We're still evaluating whether to include full names, your data stays within the campus system only.</p>
+          </div>
+
+          <div class="form-divider"></div>
+          <p class="form-divider-label">OPTIONAL FIELDS</p>
+          
+          <div class="field-row">
+            <div class="field"><label for="firstName">FIRST NAME <span style="color:var(--c-dim);font-size:.8em;">(OPTIONAL)</span></label><input type="text" id="firstName" value="{{ student.first_name }}" placeholder="Leave blank for privacy"/></div>
+            <div class="field"><label for="lastName">LAST NAME <span style="color:var(--c-dim);font-size:.8em;">(OPTIONAL)</span></label><input type="text" id="lastName" value="{{ student.last_name }}" placeholder="Leave blank for privacy"/></div>
+          </div>
+          <div class="field"><label for="contactNum">CONTACT NUMBER <span style="color:var(--c-dim);font-size:.8em;">(OPTIONAL)</span></label><input type="tel" id="contactNum" value="{{ student.contact_num }}" placeholder="e.g. 09XX-XXX-XXXX"/></div>
+          
+          <div class="extend-note" role="note"><span class="extend-icon" aria-hidden="true">🧩</span><p class="extend-text">Note that the functionality of this page is currently not on its peak. More fields will be added here <code>soon</code>.</p></div>
+          
+          <div class="form-divider"></div>
+          <p class="form-divider-label">CHANGE PASSWORD</p>
+          <div class="field"><label for="curPw">CURRENT PASSWORD</label><input type="password" id="curPw" placeholder="••••••••"/></div>
+          <div class="field-row">
+            <div class="field"><label for="newPw">NEW PASSWORD</label><input type="password" id="newPw" placeholder="At least 8 characters"/></div>
+            <div class="field"><label for="confPw">CONFIRM NEW PASSWORD</label><input type="password" id="confPw" placeholder="••••••••"/></div>
+          </div>
+          
+          <div class="form-actions">
+            <button class="btn btn-primary" onclick="saveProfile()">▶ SAVE CHANGES</button>
+            <button class="btn btn-ghost" onclick="clearProfileForm()">DISCARD</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- == (3-Dashb) RECORDS == -->
+  <div class="page-panel" id="page-records">
+    <div class="inner">
+      <div class="ph">
+        <p class="ph-tag">HISTORY</p>
+        <h1 class="ph-title">MY <span class="acc">RECORDS</span></h1>
+        <p class="ph-sub">All your BAO orders and clinic appointments in one place. Print any form at any time.</p>
+      </div>
+      <div class="summary-row" role="list">
+        <div class="sum-chip" role="listitem"><span class="sum-num">3</span><span class="sum-label">TOTAL BAO<br/>ORDERS</span></div>
+        <div class="sum-chip" role="listitem"><span class="sum-num">1</span><span class="sum-label">ACTIVE<br/>ORDER</span></div>
+        <div class="sum-chip" role="listitem"><span class="sum-num" style="color:var(--c-p5);">1</span><span class="sum-label">UPCOMING<br/>APPOINTMENT</span></div>
+        <div class="sum-chip" role="listitem"><span class="sum-num">4</span><span class="sum-label">COMPLETED<br/>TOTAL</span></div>
+      </div>
+      <div class="tab-bar" role="tablist">
+        <button class="tab active" id="rec-tab-bao" role="tab" aria-selected="true" onclick="switchRecTab('bao')">🛒 BAO ORDERS</button>
+        <button class="tab" id="rec-tab-clinic" role="tab" aria-selected="false" onclick="switchRecTab('clinic')">🏥 CLINIC APPOINTMENTS</button>
+      </div>
+      <!-- BAO rec -->
+      <div id="panel-bao">
+        <div class="filter-row">
+          <span class="filter-label">FILTER:</span>
+          <button class="filter-btn active" onclick="setFilter(this,'bao','all')" aria-pressed="true">ALL</button>
+          <button class="filter-btn" onclick="setFilter(this,'bao','active')" aria-pressed="false">ACTIVE</button>
+          <button class="filter-btn" onclick="setFilter(this,'bao','pending')" aria-pressed="false">PENDING</button>
+          <button class="filter-btn" onclick="setFilter(this,'bao','claimed')" aria-pressed="false">CLAIMED</button>
+        </div>
+        <div class="table-card">
+          <table class="rec-table" aria-label="BAO orders">
+            <thead><tr><th>ORDER ID</th><th>ITEMS</th><th>DATE PLACED</th><th>STATUS</th><th>ACTIONS</th></tr></thead>
+            <tbody id="bao-tbody">
+              {% for order in bao_orders %}
+                <tr data-status="{% if order.status in 'pending,ready' %}active{% else %}{{ order.status }}{% endif %}">
+                  <td><span class="rec-id">{{ order.order_number }}</span></td>
+                  <td>
+                    <span class="rec-items">
+                      {% for item in order.items.all %}
+                        {{ item.item_name }} {% if item.size %}— {{ item.size }}{% endif %} (×{{ item.qty }}){% if not forloop.last %}, {% endif %}
+                      {% endfor %}
+                    </span>
+                    <p class="rec-meta">
+                      {% if order.status == 'claimed' %}Claimed: {{ order.updated_at|date:"M d, Y" }}
+                      {% else %}Claim at: BAO Counter{% endif %}
+                    </p>
+                  </td>
+                  <td>{{ order.placed_at|date:"M d, Y" }}</td>
+                  <td>
+                    <span class="chip {% if order.status in 'pending,ready' %}chip-lime{% else %}chip-muted{% endif %}">
+                      {% if order.status in 'pending,ready' %}<span class="chip-dot"></span>{% endif %}{{ order.get_status_display|upper }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="act-btns">
+                      <button class="btn-sm print" onclick="openModal('BAO Order {{ order.order_number }}', '{% for item in order.items.all %}{{ item.item_name }} (×{{ item.qty }}){% if not forloop.last %}, {% endif %}{% endfor %}', '{{ order.placed_at|date:'M d, Y' }}', '{{ order.get_status_display }}', '{{ student.user_id }}', '{{ student.username|escapejs }}')">🖨 PRINT</button>                    </div>
+                  </td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="5" style="text-align:center; color:var(--c-dim);">No BAO orders found.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <!-- Clinic rec -->
+      <div id="panel-clinic" style="display:none;">
+        <div class="filter-row">
+          <span class="filter-label">FILTER:</span>
+          <button class="filter-btn active" onclick="setFilter(this,'clinic','all')" aria-pressed="true">ALL</button>
+          <button class="filter-btn" onclick="setFilter(this,'clinic','upcoming')" aria-pressed="false">UPCOMING</button>
+          <button class="filter-btn" onclick="setFilter(this,'clinic','completed')" aria-pressed="false">COMPLETED</button>
+        </div>
+        <div class="table-card">
+          <table class="rec-table" aria-label="Clinic appointments">
+            <thead><tr><th>APPT ID</th><th>SERVICE</th><th>DATE</th><th>STATUS</th><th>ACTIONS</th></tr></thead>
+            <tbody id="clinic-tbody">
+              {% for appt in clinic_appts %}
+                <tr data-status="{% if appt.status == 'confirmed' %}upcoming{% else %}{{ appt.status }}{% endif %}">
+                  <td><span class="rec-id">{{ appt.appt_number }}</span></td>
+                  <td>
+                    <span class="rec-items">{{ appt.get_service_label }}</span>
+                    <p class="rec-meta">{{ appt.time_slot }} · Campus Clinic</p>
+                  </td>
+                  <td>{{ appt.appt_date|date:"M d, Y" }}</td>
+                  <td>
+                    <span class="chip {% if appt.status == 'confirmed' %}chip-warn{% else %}chip-muted{% endif %}">
+                      {% if appt.status == 'confirmed' %}<span class="chip-dot"></span>UPCOMING{% else %}{{ appt.get_status_display|upper }}{% endif %}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="act-btns">
+                      <button class="btn-sm print" onclick="openModal('Clinic Appt {{ appt.appt_number }}', '{{ appt.get_service_label }}', '{{ appt.appt_date|date:'M d, Y' }}', '{{ appt.get_status_display }}', '{{ student.user_id }}', '{{ student.username|escapejs }}')">🖨 PRINT</button>
+                    </div>
+                  </td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="5" style="text-align:center; color:var(--c-dim);">No Clinic appointments found.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal">
+    <h2 class="modal-title" id="modal-title">REPRINT FORM</h2>
+    <p class="modal-sub">Review the details then print or export to PDF.</p>
+    <div class="modal-info" id="modal-info"></div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="window.print()">🖨 PRINT / EXPORT PDF</button>
+      <button class="btn btn-ghost" onclick="document.getElementById('modalOverlay').classList.remove('open')">CLOSE</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="{% static 'js/navgo.js' %}"></script>
+<script src="{% static 'js/dashboard.js' %}"></script>
+</body>
+</html>

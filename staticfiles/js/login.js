@@ -1,0 +1,110 @@
+let currentRole = "student";
+let currentTab = "login";
+
+function setRole(role) {
+    currentRole = role;
+
+    document
+        .getElementById("roleStudent")
+        .classList.toggle("active", role === "student");
+    document
+        .getElementById("roleStaff")
+        .classList.toggle("active", role === "staff");
+    document
+        .getElementById("roleStudent")
+        .setAttribute("aria-pressed", role === "student");
+    document
+        .getElementById("roleStaff")
+        .setAttribute("aria-pressed", role === "staff");
+
+    const loginRoleInput = document.getElementById("loginRole");
+    const registerRoleInput = document.getElementById("registerRole");
+    if (loginRoleInput) loginRoleInput.value = role;
+    if (registerRoleInput) registerRoleInput.value = role;
+
+    const isStaff = role === "staff";
+    const idLabel = isStaff ? "STAFF" : "STUDENT";
+    const idHintL = isStaff
+        ? "You can use either your email or your staff ID."
+        : "You can use either your email or your student ID.";
+    const idHintR = isStaff
+        ? "Your university-issued staff ID."
+        : "Your university-issued student ID.";
+    const phLogin = isStaff
+        ? "e.g. staff@lspu.edu.ph or STAFF-001"
+        : "e.g. user@email.com or 0124-0958";
+    const phReg = isStaff ? "e.g. STAFF-001" : "e.g. 0124-0958";
+    const emailPh = isStaff ? "yourname@lspu.edu.ph" : "yourname@email.com";
+
+    document.getElementById("loginIdType").textContent = idLabel;
+    document.getElementById("regIdType").textContent = idLabel;
+    document.getElementById("loginIdHint").textContent = idHintL;
+    document.getElementById("regIdHint").textContent = idHintR;
+    document.getElementById("loginId").placeholder = phLogin;
+    document.getElementById("regId").placeholder = phReg;
+    document.getElementById("regEmail").placeholder = emailPh;
+}
+
+function setTab(tab) {
+    currentTab = tab;
+    const isLogin = tab === "login";
+
+    document.getElementById("tabLogin").classList.toggle("active", isLogin);
+    document.getElementById("tabRegister").classList.toggle("active", !isLogin);
+    document.getElementById("tabLogin").setAttribute("aria-selected", isLogin);
+    document
+        .getElementById("tabRegister")
+        .setAttribute("aria-selected", !isLogin);
+
+    document.getElementById("sectionLogin").classList.toggle("active", isLogin);
+    document
+        .getElementById("sectionRegister")
+        .classList.toggle("active", !isLogin);
+}
+
+function togglePw(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const showing = input.type === "text";
+    input.type = showing ? "password" : "text";
+    btn.setAttribute("aria-label", showing ? "Show password" : "Hide password");
+    btn.querySelector("svg").innerHTML = showing
+        ? '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>'
+        : '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+}
+
+const themeBtn = document.getElementById("themeToggle");
+let light = false;
+themeBtn.addEventListener("click", () => {
+    light = !light;
+    document.documentElement.setAttribute("data-theme", light ? "light" : "");
+    themeBtn.innerHTML = light
+        ? '<span style="font-size:medium;">◑</span> LIGHT'
+        : '<span style="font-size:medium;">◑</span> DARK';
+    themeBtn.setAttribute(
+        "aria-label",
+        light ? "Switch to dark theme" : "Switch to light theme",
+    );
+});
+
+document.querySelectorAll(".role-tab").forEach((btn) => {
+    btn.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+            const all = [...document.querySelectorAll(".role-tab")];
+            const idx = all.indexOf(btn);
+            const next =
+                all[
+                    (idx + (e.key === "ArrowRight" ? 1 : -1) + all.length) %
+                        all.length
+                ];
+            next.focus();
+            next.click();
+        }
+    });
+});
+
+(function () {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("tab") === "register") {
+        setTab("register");
+    }
+})();

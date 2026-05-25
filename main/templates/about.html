@@ -1,0 +1,349 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>LSPU NavGO | About Us</title>
+<link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}"/>
+<link rel="stylesheet" href="{% static 'css/about.css'%}"/>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+
+</head>
+<body>
+
+<div class="orb o1" aria-hidden="true"></div>
+<div class="orb o2" aria-hidden="true"></div>
+
+<nav role="navigation" aria-label="Main navigation">
+  <a href="{% url 'home' %}" class="nav-logo" aria-label="LSPU NAVGO home">
+    <img src="{% static 'img/small-logo.png' %}" width="38px" height="auto" alt="logo"> </div>
+    <div><div class="logo-name">LSPU NAVGO</div><div class="logo-sub">Virtual Student Hub</div></div>
+  </a>
+  <div class="nav-r">
+    <a href="{% url 'home' %}" class="nav-link">HOME</a>
+    <a href="{% url 'about' %}" class="nav-link active" aria-current="page">ABOUT</a>
+    <a href="{% url 'login' %}" class="nav-link">LOGIN</a>
+    <button class="theme-btn" id="themeToggle" aria-label="Toggle theme">◑</button>
+    <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="{% url 'home' %}" class="nav-link" onclick="closeMenu()">HOME</a>
+  <a href="{% url 'about' %}" class="nav-link active">ABOUT</a>
+  <a href="{% url 'login' %}" class="nav-link" onclick="closeMenu()">LOGIN</a>
+</div>
+
+<div class="page">
+  <div class="hero-banner" aria-label="About page hero">
+    <div class="hero-eyebrow"><div class="hero-dot" aria-hidden="true"></div>LSPU NAVGO — FINAL PROJECT IN SOFTWARE DESIGN</div>
+    <h1 class="hero-title" style="word-spacing: -20px;">THE <span class="acc">SUPERTEAM</span><br/> <span class="acc2">GROUP 6 (SIX)</span> </h1>
+    <p class="hero-sub"><i>"Our shared problems should not be left ignored, </br> be the solution your university deprives you of."</i></p>
+  </div>
+
+  <section class="section" aria-labelledby="project-title">
+    <div class="section-inner">
+      <p class="section-tag fi">THE PROJECT</p>
+      <h2 class="section-title fi" id="project-title">WHAT IS<br/><span class="acc">LSPU NAVGO?</span></h2>
+      <p class="section-desc fi" style="text-align:justify; max-width: 1000px; text-indent: 50px; font-size: 17px;">
+        NavGO is a web-application designed to make school transactions and services much more accessible and easier to process online, reducing the need to check for onsite follow-ups. It provides access for both students and certain staff (BAO and Clinic). Some of the main features included in the web-app are Registration, Login, Staff Dashboard, Student Dashboard, and a Student Profile for storing user information like name, ID, and program.
+      </p>
+      <p class="section-desc fi" style="text-align:justify; max-width: 1000px; text-indent: 50px; margin-top:15px; font-size: 17px;">
+      The web application features BAO Management for handling student orders, an Appointment System for clinic scheduling and medical requests, and a Student Center where students can buy and sell items. It includes a quick access web view  for easier navigation. The Student records such as order history and appointment data will be stored on the system.
+LSPU NAVGO aims to improve access to school services through a platform that helps students complete transactions more easily,  improving overall convenience and efficiency for both students and staff.
+    </p>
+      <div class="project-grid">
+        <div class="project-card lime fi" role="article">
+          <span class="pc-icon" aria-hidden="true">🏪</span>
+          <h3 class="pc-title">STUDENT CENTER</h3>
+          <p class="pc-desc" style="text-align: justify">Provides a place for students to <b>buy-and-sell</b> their products without requiring them to pay for any kinds fees. For certain colleges, if their department is currently having an event they could just list their items for a limited time (but with coordination with certain staffs that handle the web-app)</p>
+        </div>
+        <div class="project-card fi" role="article">
+          <span class="pc-icon" aria-hidden="true">⚡</span>
+          <h3 class="pc-title">QUICK ACCESS WEB</h3>
+          <p class="pc-desc" style="text-align: justify">Currently, our webapp offers only a <b>single path</b> for accessing and using our services since the other path is currently in works by our team. This quick web view foreshadows the services that will appear inside the gamified top-down version. The team is doing their best to provide the best experience for students.</p>
+        </div>
+        <div class="project-card fi" role="article">
+          <span class="pc-icon" aria-hidden="true">🛒</span>
+          <h3 class="pc-title">BUSINESS AFFAIRS OFFICE SERVICE</h3>
+          <p class="pc-desc" style="text-align: justify">An eCommerce type of interface but requires no any kinds of fees. Students can check if their needs are available currently on BAO, without having to visit every now and then. Students may also see the possible date an item would be available. After placing an order, the student will be given a form (by the system) that they'll present on the counter at the BAO. Which speeds up the process.</p>
+        </div>
+        <div class="project-card lime fi" role="article">
+          <span class="pc-icon" aria-hidden="true">🏥</span>
+          <h3 class="pc-title">CLINIC SERVICE</h3>
+          <p class="pc-desc" style="text-align: justify">Students can appoint for physical check-ups or processing medical records by their <b>set-date</b>, but by <i>"appointing"</i> they will only be given an appointment form that they'll bring with upon attending the clinic, but will still require the student to scan their filled appointment form and submit upon appointment. </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt-bg" aria-labelledby="tech-title">
+    <div class="section-inner">
+      <p class="section-tag fi">TECHNOLOGY</p>
+      <h2 class="section-title fi" id="tech-title">BUILT WITH<br/><span class="acc">THESE TOOLS</span></h2>
+      <p class="section-desc fi">A full-stack web application using a Python/Django backend, vanilla HTML/CSS/JS frontend, and a MySQL relational database which is deployed on a local server (my pc).</p>
+
+      <div class="stack-grid">
+        <div class="stack-card backend fi" role="article" aria-label="Backend: Python Django">
+          <span class="stack-icon" aria-hidden="true">🐍</span>
+          <span class="stack-layer">BACKEND FRAMEWORK</span>
+          <p class="stack-name">PYTHON &amp;<br/>DJANGO</p>
+          <p class="stack-desc">Handles routing, authentication, services' logic, and relationships. Django's ORM manages all database interactions cleanly and securely.</p>
+        </div>
+        <div class="stack-card frontend fi" role="article" aria-label="Frontend: HTML CSS JS">
+          <span class="stack-icon" aria-hidden="true">🖥️</span>
+          <span class="stack-layer">FRONTEND</span>
+          <p class="stack-name">HTML · CSS<br/>JAVASCRIPT</p>
+          <p class="stack-desc">Pure vanilla stack with no frameworks. Press Start 2P pixel font, custom CSS variables, and vanilla JS handle the entire interactive UI</p>
+        </div>
+        <div class="stack-card db fi" role="article" aria-label="Database: MySQL">
+          <span class="stack-icon" aria-hidden="true">🗄️</span>
+          <span class="stack-layer">DATABASE</span>
+          <p class="stack-name">MYSQL</p>
+          <p class="stack-desc">Relational database storing student profiles, BAO inventory, clinic appointments, orders, and Student Center listings with full referential integrity.</p>
+        </div>
+        <div class="stack-card server fi" role="article" aria-label="Server">
+          <span class="stack-icon" aria-hidden="true">🌐</span>
+          <span class="stack-layer">SERVER</span>
+          <p class="stack-name">LOCAL SERVER<br/></p>
+          <p class="stack-desc">Since we our team decided to not deploy our web application, therefore our server only runs on a local computer by one of the member in the team.</p>
+        </div>
+      </div>
+
+      <div class="flow-wrap fi" aria-label="System architecture flow">
+        <div class="flow" role="img" aria-label="Browser to Django to MySQL architecture">
+          <div class="flow-node">
+            <span class="flow-node-icon" aria-hidden="true">🌐</span>
+            <span class="flow-node-label">BROWSER</span>
+            <span class="flow-node-sub">HTML / CSS / JS</span>
+          </div>
+          <div class="flow-arrow" aria-hidden="true">→</div>
+          <div class="flow-node">
+            <span class="flow-node-icon" aria-hidden="true">🔁</span>
+            <span class="flow-node-label">HTTP REQUEST</span>
+            <span class="flow-node-sub">GET / POST / AJAX</span>
+          </div>
+          <div class="flow-arrow" aria-hidden="true">→</div>
+          <div class="flow-node">
+            <span class="flow-node-icon" aria-hidden="true">🐍</span>
+            <span class="flow-node-label">DJANGO VIEWS</span>
+            <span class="flow-node-sub">Python Backend</span>
+          </div>
+          <div class="flow-arrow" aria-hidden="true">→</div>
+          <div class="flow-node">
+            <span class="flow-node-icon" aria-hidden="true">🗄️</span>
+            <span class="flow-node-label">MYSQL DB</span>
+            <span class="flow-node-sub">ORM Queries</span>
+          </div>
+          <div class="flow-arrow" aria-hidden="true">→</div>
+          <div class="flow-node">
+            <span class="flow-node-icon" aria-hidden="true">📄</span>
+            <span class="flow-node-label">RESPONSE</span>
+            <span class="flow-node-sub">JSON</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="team-title">
+    <div class="section-inner">
+      <p class="section-tag fi">THE TEAM</p>
+      <h2 class="section-title fi" id="team-title">SIX (6) SUPER <span class="acc">DEVELOPERS.</span><br/>ONE SUPER WEB-APP.</h2>
+      <p class="section-desc fi">
+        A dedicated group of BS Computer Engineering students, united by a shared problem with a goal of making university experience more accessible through advancing technology .
+      </p>
+
+      <div class="team-grid">
+
+        <!-- MEMBER 1 -->
+        <div class="member-card fi" role="article" aria-label="Team member 1">
+          <div class="member-visual">
+            <img src="{% static 'img/members/leonardo.png' %}" width="150px" height="auto" alt="logo"> 
+
+            <span class="member-num" aria-hidden="true">01</span>
+          </div>
+          <div class="member-body">
+            <h3 class="member-name">LEONARDO, JAN ERIZ ANGELO S.</h3>
+            <span class="member-role-badge">🎮 PROJECT LEAD</span>
+            <p class="member-desc">Directed the project's vision to the whole team by continuously keeping everyone's idea aligned. With my experiences, I guided each of the members of team on their respective roles.</p>
+            <p class="placeholder-note">"Don't face your fear, fear your face.</p>
+          </div>
+        </div>
+
+        <!-- MEMBER 2 -->
+        <div class="member-card fi" role="article" aria-label="Team member 2">
+          <div class="member-visual">
+            <img src="{% static 'img/members/marcaida.png' %}" width="140px" height="auto" alt="logo"> 
+
+            <span class="member-num" aria-hidden="true">02</span>
+          </div>
+          <div class="member-body">
+            <h3 class="member-name">MARCAIDA, JOHN LEE M.</h3>
+            <span class="member-role-badge">🐍 BACKEND DEV</span>
+            <p class="member-desc">Engineered the core logic and server-side architecture, ensuring security upon data flow and performance for the web app.</p>
+            <p class="placeholder-note">"qouting meow meow"</p>
+          </div>
+        </div>
+
+        <!-- MEMBER 3 -->
+        <div class="member-card fi" role="article" aria-label="Team member 3">
+          <div class="member-visual">
+            <img src="{% static 'img/members/baludcal.png' %}" width="140px" height="auto" alt="logo"> 
+
+            <span class="member-num" aria-hidden="true">03</span>
+          </div>
+          <div class="member-body">
+            <h3 class="member-name">BALUDCAL, RAVEN DWAYNE</h3>
+            <span class="member-role-badge">🖥️ FRONTEND DEV</span>
+            <p class="member-desc">Translated design concepts into responsive, interactive user interfaces by focusing on delivering a smooth and engaging experience.</p>
+            <p class="placeholder-note">"I think, therefore I am."</p>
+          </div>
+        </div>
+
+        <!-- MEMBER 4 -->
+        <div class="member-card fi" role="article" aria-label="Team member 4">
+          <div class="member-visual">
+              <img src="{% static 'img/members/allan.jpg' %}" width="150px" height="auto" alt="logo"> 
+
+
+            <span class="member-num" aria-hidden="true">04</span>
+          </div>
+          <div class="member-body">
+            <h3 class="member-name">MIANO, ALLAN GERARD</h3>
+            <span class="member-role-badge">🗄️ QA/TESTER</span>
+            <p class="member-desc">Making sure the application is tested to identify bugs, troubleshoot issues, and ensure an error-free experience for all users.</p>
+            <p class="placeholder-note">Replace with name, role, and a short contribution note.</p>
+          </div>
+        </div>
+
+        <!-- MEMBER 5 -->
+        <div class="member-card fi" role="article" aria-label="Team member 5">
+          <div class="member-visual">
+            <img src="{% static 'img/members/lopez.png' %}" width="120px" height="auto" alt="logo"> 
+
+            <span class="member-num" aria-hidden="true">05</span>
+          </div>
+          <div class="member-body">
+            <h3 class="member-name">LOPEZ, KHYZA ARRIANE</h3>
+            <span class="member-role-badge">🎨 UI/UX DESIGNER</span>
+            <p class="member-desc">Crafted intuitive and visually appealing layouts, prioritizing user-centric design to provide an inexplicable experience for all students.</p>
+            <p class="placeholder-note">"Winners love winning"</p>
+          </div>
+        </div>
+
+        <!-- MEMBER 6 -->
+        <div class="member-card fi" role="article" aria-label="Team member 6">
+          <div class="member-visual">
+            <img src="{% static 'img/members/tope.png' %}" width="150px" height="auto" alt="logo"> 
+
+
+            <span class="member-num" aria-hidden="true">06</span>
+          </div>
+          <div class="member-body">
+            <h3 class="member-name">TOPE, PRINCESS PLEBISCITE</h3>
+            <span class="member-role-badge">SUBJECT ADVISER</span>
+            <p class="member-desc">Without our sumptuous adviser's guidance, completing this final project wouldn't be possible.</p>
+            <p class="placeholder-note">We extend our very super utmost gratitude.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="section alt-bg" aria-labelledby="mission-title">
+    <div class="section-inner">
+      <p class="section-tag fi">OUR MISSION</p>
+      <h2 class="section-title fi" id="mission-title">WHY WE<br/><span class="acc">BUILT THIS</span></h2>
+      <p class="section-desc fi">
+        We built LSPU NAVGO to solve the common challenges students face, such as limited transportation, manual processes, and the need to physically visit the campus just to check item availability or book appointments. This web application brings school transactions online, significantly improving accessibility, convenience, and efficiency for both students and staff[cite: 1].
+      </p>
+
+      <div class="values-grid">
+        <div class="value-card fi" role="article">
+          <span class="value-icon" aria-hidden="true">🗺️</span>
+          <h3 class="value-title">EASE OF ACCESS</h3>
+          <p class="value-desc">We created a centralized hub where users can easily navigate to key services like the BAO, Clinic, and Student Center. This design drastically reduces the need for walk-in visits and long waiting times.</p>
+        </div>
+        <div class="value-card fi" role="article">
+          <span class="value-icon" aria-hidden="true">⚡</span>
+          <h3 class="value-title">ZERO HIDDEN FRICTION</h3>
+          <p class="value-desc">Auto-populated forms, printable slips, real-time stock. Every feature is designed to save time, reduce manual workloads, and improve overall efficiency in handling requests.</p>
+        </div>
+        <div class="value-card fi" role="article">
+          <span class="value-icon" aria-hidden="true">🤝</span>
+          <h3 class="value-title">STUDENT-FIRST DESIGN</h3>
+          <p class="value-desc">The platform was built specifically for university students to make completing transactions as easy as possible. As also being a students helps us correlate with the student's micro struggles inside the university.</p>
+        </div>
+      </div>
+
+      <div class="ack-box fi" role="note" aria-label="Future Enhancements">
+        <h3 class="ack-title">LOOKING AHEAD</h3>
+        <p class="ack-text" style="line-height: 1.2;">
+          <b><span style="font-size: 18px;">We are continuously working to improve LSPU NAVGO. Our roadmap includes:</span></b></br></br>
+          <span style="text-align: left;">
+          1. Multi-Language Support- Allows users to select from a variety of multiple language options to improve accessibility and usability. <br/><br/>
+          2. Mobile Responsiveness - A mobile-friendly version of the web application to ensure better access for smartphones and tablets.<br/><br/>
+          3. Cross-Platform Compatibility - Further development should ensure consistent performance across various devices, browsers, and screen sizes.<br/><br/>
+          4. Pixel Campus Navigation - Allows users to easily locate buildings, offices, and facilities in the LSPU through navigating a pixel map version of the school.<br/><br/>
+          5. ChatBot - An AI-powered chatbot that assists users in navigating the web application, answering frequently asked questions, and guiding them through the system. <br/><br/>
+          6. Security Enhancements - Includes stronger security measures such as user authentication upgrades, data encryption, and protection against common web vulnerabilities.<br/><br/>
+          </span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+
+  <footer role="contentinfo">
+    <div class="footer-inner">
+      <p class="footer-copy">© 2026 LSPU NAVGO · LAGUNA STATE POLYTECHNIC UNIVERSITY - SANTA CRUZ CAMPUS · SOFTWARE DESIGN - FINAL PROJECT · ALL RIGHTS RESERVED</p>
+      <div class="footer-dots" aria-hidden="true">
+        <div class="fdot"></div><div class="fdot"></div>
+        <div class="fdot"></div><div class="fdot"></div>
+      </div>
+    </div>
+  </footer>
+
+</div><!-- end .page -->
+
+<script>
+/* ── Theme ── */
+let light = false;
+document.getElementById('themeToggle').addEventListener('click', () => {
+  light = !light;
+  document.documentElement.setAttribute('data-theme', light ? 'light' : '');
+});
+
+/* ── Mobile menu ── */
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+hamburger.addEventListener('click', () => {
+  const open = mobileMenu.classList.toggle('open');
+  hamburger.setAttribute('aria-expanded', open);
+});
+function closeMenu() {
+  mobileMenu.classList.remove('open');
+  hamburger.setAttribute('aria-expanded', 'false');
+}
+
+/* ── Scroll fade-in ── */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      e.target.style.transitionDelay = (i % 4) * 0.08 + 's';
+      e.target.classList.add('vis');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.fi').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

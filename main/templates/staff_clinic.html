@@ -1,0 +1,217 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>LSPU NavGO | Clinic Staff Dashboard</title>
+<link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+<link rel="stylesheet" href="{% static 'css/navgo.css' %}"/>
+<link rel="stylesheet" href="{% static 'css/staff_clinic.css' %}"/>
+
+</head>
+<body>
+
+<nav class="topnav" role="navigation" aria-label="Main navigation">
+  <a href="{% url 'clinic_staff' %}" class="nav-logo" aria-label="LSPU NAVGO home">
+    <div class="logo-hex" aria-hidden="true">
+        <img src="{% static 'img/small-logo.png' %}" width="34px" height="auto" alt="logo"> 
+    </div>
+    <div><div class="logo-name">LSPU NAVGO</div><div class="logo-sub">Virtual Student Hub</div></div>
+  </a>
+  <div class="nav-r">
+    <div class="nav-user" style="background:rgba(218,255,35,.08);border-color:rgba(218,255,35,.2);">
+        <div class="nav-avatar" style="background:rgba(218,255,35,.2);border-color:rgba(218,255,35,.4);color:var(--c-lime);">C</div>
+        <span style="font-family:var(--font-px);font-size:5px;color:var(--c-lime);letter-spacing:.08em;">CLINIC STAFF</span>
+    </div>
+    <button class="nav-btn" id="themeToggle" aria-label="Toggle theme">◑</button>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<aside class="sidebar" id="sidebar" role="navigation" aria-label="Staff sidebar">
+    <div class="staff-sidebar-note">⚕ CLINIC STAFF ACCESS</div>
+    <div class="sb-section">
+        <p class="sb-label">CLINIC STAFF</p>
+        <a href="{% url 'clinic_staff' %}" class="sb-link active" aria-current="page"><span class="sb-icon">📅</span> CLINIC STATUS</a>
+    </div>
+    <div class="divider"></div>
+    <div class="sb-section">
+        <p class="sb-label">CONNECT WITH STUDENTS</p>
+        <a href="{% url 'staff_sc_clinic' %}" class="sb-link"><span class="sb-icon" aria-hidden="true">🏪</span> STUDENT CENTER</a>
+    </div>
+    <div class="sb-bottom">
+        <a href="{% url 'login' %}" class="sb-link"><span class="sb-icon">⏏</span> LOG OUT</a>
+    </div>
+</aside>
+
+<main class="main" role="main">
+    <div class="inner">
+
+        <div class="ph">
+        <p class="ph-tag">STAFF · CLINIC</p>
+        <h1 class="ph-title">APPOINTMENT <span class="acc">STATUS</span></h1>
+        <p class="ph-sub">Click any date to see real appointment volume from the database. Manage upcoming appointments below.</p>
+        </div>
+
+
+        <div class="stat-row" role="list" aria-label="Today's statistics">
+        <div class="stat-card lime" role="listitem">
+            <div class="stat-num">{{ today_total }}</div>
+            <div class="stat-label">EXPECTED<br/>TODAY</div>
+        </div>
+        <div class="stat-card purple" role="listitem">
+            <div class="stat-num">{{ today_checkup }}</div>
+            <div class="stat-label">PHYSICAL<br/>CHECK-UPS</div>
+        </div>
+        <div class="stat-card warn" role="listitem">
+            <div class="stat-num">{{ today_records }}</div>
+            <div class="stat-label">MEDICAL RECORD<br/>REQUESTS</div>
+        </div>
+        <div class="stat-card info" role="listitem">
+            <div class="stat-num">{{ week_total }}</div>
+            <div class="stat-label">EXPECTED<br/>THIS WEEK</div>
+        </div>
+        </div>
+
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+        <span style="font-family:var(--font-px);font-size:6px;color:var(--c-muted);letter-spacing:.1em;">SELECT A DATE TO VIEW FORECAST</span>
+        <div class="view-toggle" role="group" aria-label="Toggle view">
+            <button class="vt-btn active" id="btnCal" onclick="setView('cal')" aria-pressed="true">📅 CALENDAR</button>
+            <button class="vt-btn" id="btnList" onclick="setView('list')" aria-pressed="false">📋 LIST VIEW</button>
+        </div>
+        </div>
+
+        <div class="dash-grid">
+
+        <div id="calView">
+            <div class="cal-card">
+            <div class="cal-header">
+                <h2 class="cal-title">APPOINTMENT CALENDAR</h2>
+                <div style="display:flex;align-items:center;gap:12px;">
+                <span class="cal-month-label" id="calMonthLabel" aria-live="polite">—</span>
+                <div class="cal-nav-wrap">
+                    <button class="cal-nav" onclick="changeMonth(-1)" aria-label="Previous month">‹</button>
+                    <button class="cal-nav" onclick="changeMonth(1)" aria-label="Next month">›</button>
+                </div>
+                </div>
+            </div>
+            <div class="cal-legend" aria-label="Calendar legend">
+                <div class="leg-item"><div class="leg-dot light"></div>1–5 APPTS</div>
+                <div class="leg-item"><div class="leg-dot medium"></div>6–10 APPTS</div>
+                <div class="leg-item"><div class="leg-dot heavy"></div>11–15 APPTS</div>
+                <div class="leg-item"><div class="leg-dot full"></div>16+ APPTS</div>
+                <div class="leg-item"><div class="leg-dot today-dot"></div>TODAY</div>
+            </div>
+            <div class="cal-grid-wrap">
+                <div class="dow-row" aria-hidden="true">
+                <div class="dow">SUN</div><div class="dow">MON</div><div class="dow">TUE</div>
+                <div class="dow">WED</div><div class="dow">THU</div><div class="dow">FRI</div><div class="dow">SAT</div>
+                </div>
+                <div class="days-grid" id="daysGrid" role="grid" aria-label="Calendar"></div>
+            </div>
+            </div>
+
+
+            <div class="list-view" id="listView">
+            <div class="cal-card" style="margin-top:0;">
+                <div class="cal-header"><h2 class="cal-title">MONTHLY SCHEDULE</h2></div>
+                <table class="list-table" aria-label="Monthly schedule">
+                <thead><tr>
+                    <th>DATE</th><th>TOTAL</th><th>CHECK-UPS</th><th>RECORDS</th><th>LOAD</th>
+                </tr></thead>
+                <tbody id="listTbody"></tbody>
+                </table>
+            </div>
+            </div>
+        </div>
+
+
+        <div class="detail-panel" aria-label="Day detail panel" aria-live="polite">
+            <div class="dp-header">
+            <h2 class="dp-title">DAY FORECAST</h2>
+            <p class="dp-date" id="detailDate">SELECT A DATE</p>
+            </div>
+            <div class="dp-body" id="detailBody">
+            <div class="empty-detail">
+                <div class="ed-icon" aria-hidden="true">📅</div>
+                <p class="ed-text">CLICK ANY DATE ON<br/>THE CALENDAR TO<br/>VIEW ITS FORECAST</p>
+            </div>
+            </div>
+        </div>
+        </div>
+
+
+        <div class="appts-card">
+        <div class="appts-header">
+            <h2 class="appts-title">UPCOMING APPOINTMENTS</h2>
+            <span style="font-family:var(--font-px);font-size:5px;color:var(--c-muted);">
+            {{ upcoming|length }} CONFIRMED
+            </span>
+        </div>
+
+        {% if upcoming %}
+            <table class="appts-table" aria-label="Upcoming appointments">
+            <thead>
+                <tr>
+                <th>APPT #</th>
+                <th>STUDENT ID</th>
+                <th>SERVICE</th>
+                <th>DATE</th>
+                <th>TIME</th>
+                <th>STATUS</th>
+                <th>ACTIONS</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appt in upcoming %}
+                <tr id="appt-row-{{ appt.pk }}">
+                    <td><span class="appt-num">{{ appt.appt_number }}</span></td>
+                    <td>{{ appt.student_user_id }}{% if appt.student_name %} · {{ appt.student_name }}{% endif %}</td>
+                    <td>
+                    {% if appt.service == 'checkup' %}
+                        <span class="chip chip-purple">🩺 CHECK-UP</span>
+                    {% else %}
+                        <span class="chip chip-warn">📁 RECORDS</span>
+                    {% endif %}
+                    </td>
+                    <td>{{ appt.appt_date|date:"M j, Y" }}</td>
+                    <td style="font-family:var(--font-px);font-size:6px;color:var(--c-text);">{{ appt.time_slot }}</td>
+                    <td><span class="chip chip-lime">{{ appt.get_status_display|upper }}</span></td>
+                    <td>
+                    <div class="act-btns">
+                        <button class="act-btn complete"
+                                onclick="updateApptStatus({{ appt.pk }}, 'completed', this)">
+                        ✓ DONE
+                        </button>
+                        <button class="act-btn cancel"
+                                onclick="updateApptStatus({{ appt.pk }}, 'cancelled', this)">
+                        ✕ CANCEL
+                        </button>
+                    </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+        {% else %}
+            <div class="empty-appts">
+            <div class="ea-icon" aria-hidden="true">📋</div>
+            <p class="ea-text">NO UPCOMING APPOINTMENTS.<br/>STUDENT BOOKINGS WILL APPEAR HERE.</p>
+            </div>
+        {% endif %}
+        </div>
+
+    </div>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+{% include "includes/messages.html" %}
+
+<script src="{% static 'js/navgo.js' %}"></script>
+<script src="{% static 'js/staff_clinic.js' %}"></script>
+</body>
+</html>

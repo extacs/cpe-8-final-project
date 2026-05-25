@@ -1,0 +1,112 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>LSPU NavGO | Game</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+        <link
+            href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="{% static 'game/css/game.css' %}"/>
+    </head>
+
+    <div style="display: inline-block; position: relative">
+        <div
+            id="overlappingDiv"
+            style="
+            background-color: black;
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 10;
+            "
+        ></div>
+        
+        <canvas> </canvas> 
+        <div
+            id="characterDialogueBox"
+            style="
+            background-color: white;
+            height: 140px;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            border-top: 4px black solid;
+            display: none;
+            padding: 12px;
+            "
+        > </div>
+
+        <!-- Battle Interface -->
+        <!-- removed -->
+    </div>
+
+    <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"
+    integrity="sha512-6+YN/9o9BWrk6wSfGxQGpt3EUK6XeHi6yeHV+TYD2GR0Sj/cggRpXr1BrAQf0as6XslxomMUxXp2vIl+fv0QRA=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+    ></script>
+    <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"
+    integrity="sha512-H6cPm97FAsgIKmlBA4s774vqoN24V5gSQL4yBTDOY2su2DeXZVhQPxFK4P6GPdnZqM9fg1G3cMv5wD7e6cFLZQ=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+    ></script>
+
+
+    <script src="{% static 'game/data/map1/map1_collisions.js' %}"></script>
+    <script src="{% static 'game/data/map1/map1_mapPortalZone.js' %}"></script>
+    <script src="{% static 'game/data/map1/map1_characters.js' %}"></script>
+
+    <script src="{% static 'game/data/map2/map2_collisions.js' %}"></script>
+    <script src="{% static 'game/data/map2/map2_mapPortalZone.js' %}"></script>
+    <script src="{% static 'game/data/map2/map2_characters.js' %}"></script>
+
+    <!-- asset loading -->
+    <script>
+        const MAP_ASSETS = {
+            MAP1: {
+                spawnPoint: {x: -524, y:-360},
+                collisions: map1_collisions,
+                mapPortalZoneData: map1_mapPortalZoneData,
+                charactersMapData: map1_charactersMapData,
+                background: "{% static 'game/img/map1/main_map.png' %}",
+                foreground: "{% static 'game/img/map1/foregroundObjects.png' %}",
+                villager: "{% static 'game/img/villager/Idle.png' %}",
+                oldman: "{% static 'game/img/oldMan/Idle.png' %}"
+            },
+            MAP2: {
+                spawnPoint: {x: -284, y:-355},
+                collisions: map2_collisions,
+                mapPortalZoneData: map2_mapPortalZoneData,
+                charactersMapData: map2_charactersMapData,
+                background: "{% static 'game/img/map2/lspuTown.png' %}" ,
+                foreground: "{% static 'game/img/map2/foregroundObjects.png' %}" ,
+                villager: "{% static 'game/img/villager/Idle.png' %}" ,
+                oldman: "{% static 'game/img/oldMan/Idle.png' %}"
+            }   
+        }
+        const SPRITE_ASSETS = {
+            PLAYER: {
+                playerDown: "{% static 'game/img/playerDown.png' %}",
+                playerUp: "{% static 'game/img/playerUp.png' %}",
+                playerLeft: "{% static 'game/img/playerLeft.png' %}" ,
+                playerRight: "{% static 'game/img/playerRight.png' %}"
+            }
+        }
+    </script>
+    <script src="{% static 'game/data/audio.js' %}"></script>
+    <script src="{% static 'game/js/utils.js' %}"></script>
+    <script src="{% static 'game/classes.js' %}"></script>
+    <script src="{% static 'game/loadMap.js' %}"></script>
+    <script src="{% static 'game/game.js' %}"></script>
+</html>

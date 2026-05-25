@@ -1,0 +1,394 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>LSPU NavGO | Student Center</title>
+<link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+<link rel="stylesheet" href="{% static 'css/navgo.css' %}"/>
+<link rel="stylesheet" href="{% static 'css/student_center.css' %}"/>
+
+</head>
+
+<body
+  data-student-id="{{ student.user_id|default:'' }}"
+  data-student-name="{{ student.username|default:'' }}"
+  data-is-mod="{{ is_moderator|yesno:'true,false' }}">
+
+<nav class="topnav" role="navigation" aria-label="Main navigation">
+  <a href="{% url 'dashboard' %}" class="nav-logo" aria-label="LSPU NAVGO home">
+    <div class="logo-hex" aria-hidden="true">
+      <img src="{% static 'img/small-logo.png' %}" width="34px" height="auto" alt="logo"> 
+    </div>
+    <div><div class="logo-name">LSPU NAVGO</div><div class="logo-sub">Virtual Student Hub</div></div>
+  </a>
+  <div class="nav-r">
+    <div class="nav-user">
+      <div class="nav-avatar" aria-hidden="true" {% if student.profile_picture_b64 %}style="background-image: url('{{ student.profile_picture_b64 }}'); background-size: cover; background-position: center; color: transparent;"{% endif %}>{{ student.username|slice:":1"|upper|default:"S" }}</div>
+      <span class="nav-uname">{{ student.username|upper|default:"STUDENT" }}</span>
+    </div>
+    {% if is_moderator %}
+      <div class="mod-badge"><div class="mod-dot" aria-hidden="true"></div>MODERATOR</div>
+    {% endif %}
+
+    <div class="notif-wrap" id="notifWrap">
+      <button class="notif-btn" id="notifBtn"
+        aria-label="Notifications" aria-expanded="false"
+        aria-haspopup="true">
+       🔔
+       <span class="notif-badge" id="notifBadge" aria-live="polite"></span>
+      </button>
+      <div class="notif-dropdown" id="notifDropdown" role="menu">
+        <div class="notif-header">
+          <span class="notif-header-title">NOTIFICATIONS</span>
+          <button class="notif-mark-all" id="notifMarkAll">MARK ALL READ</button>
+        </div>
+        <div class="notif-list" id="notifList"></div>
+        <div class="notif-footer">
+          <a href="#" class="notif-footer-link">ALL CAUGHT UP</a>
+        </div>
+      </div>
+    </div>
+
+    <button class="nav-btn" id="themeToggle" aria-label="Toggle theme">◑</button>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<aside class="sidebar" id="sidebar" role="navigation" aria-label="Sidebar">
+  <div><p class="sb-label">STUDENT</p>
+    <a href="{% url 'dashboard' %}" class="sb-link"><span class="sb-icon">⬛</span> DASHBOARD</a>
+    <a href="{% url 'dashboard' %}#profile" class="sb-link"><span class="sb-icon">👤</span> MY PROFILE</a>
+    <a href="{% url 'dashboard' %}#records" class="sb-link"><span class="sb-icon">📋</span> MY RECORDS</a>
+  </div>
+  <div class="sdiv"></div>
+  <div><p class="sb-label">SERVICES</p>
+    <a href="{% url 'bao' %}" class="sb-link"><span class="sb-icon">🛒</span> BAO</a>
+    <a href="{% url 'clinic' %}" class="sb-link"><span class="sb-icon">🏥</span> CLINIC</a>
+    <a href="{% url 'student_center' %}" class="sb-link active" aria-current="page"><span class="sb-icon">🏪</span> STUDENT CENTER</a>
+  </div>
+  <div class="sdiv"></div>
+  <div><p class="sb-label">NAVIGATION</p>
+    <a href="{% url 'choose_path' %}" class="sb-link"><span class="sb-icon">🗺️</span> CHANGE PATH</a>
+  </div>
+  <div class="sb-bottom"><a href="{% url 'login' %}" class="sb-link"><span class="sb-icon">⏏</span> LOG OUT</a></div>
+</aside>
+
+<main class="main" role="main">
+
+  <!-- WELCOME SPLASH START -->
+  <div class="splash" id="welcomeSplash" aria-label="Student Center welcome banner">
+    <div class="splash-stars" id="splashStars" aria-hidden="true"></div>
+    <div class="splash-inner">
+      <div class="splash-text">
+        <div class="splash-eyebrow"><div class="splash-dot" aria-hidden="true"></div>LSPU NAVGO</div>
+        <h1 class="splash-title">WELCOME TO THE<br/><span class="g">STUDENT</span> <span class="p">CENTER</span></h1>
+        <p class="splash-sub">Student Center is a semi-full-scale marketplace where you, students, can Buy-and-Sell items freely without having to worry about hidden fees. </br>Buy what you need. Sell what you dont.</p>
+        <div class="splash-rules">
+          <div class="rule-chip">✓ NO HIDDEN FEES</div>
+          <div class="rule-chip">✓ STUDENT CENTRALIZED</div>
+          <div class="rule-chip">✓ STAFF INCLUSION</div>
+          {% if is_moderator %}<div class="rule-chip" style="border-color:rgba(218,255,35,.4);color:var(--c-lime);">⚡ MODERATOR</div>{% endif %}
+        </div>
+      </div>
+      <div class="splash-art" aria-hidden="true">
+        <img src="{% static 'img/student-center_logo.png' %}" width="900px" height="auto" alt="logo" style="position: relative; left: -550px; top: -350px;"> 
+        {% comment %} <img src="{% static 'img/student-center_logo.png' %}" width="600px" height="auto" alt="logo" style="position: relative; left: -390px; top: -220px;">  {% endcomment %}
+          <div class="coin" style="left:-200px;top:100px;--d:2.2s;">🪙</div>
+          <div class="coin" style="left:50px;top:80px;--d:3.1s;animation-delay:.8s;">🪙</div>
+          <div class="coin" style="left:-90px;top:0px;--d:2.7s;animation-delay:1.4s;">🪙</div>
+          <div class="coin" style="left:-130px;top:190px;--d:2.7s;animation-delay:1.4s;">🪙</div>
+          <div class="coin" style="left:-38px;top:140px;--d:2.7s;animation-delay:1.4s;">🪙</div>
+      </div>
+    </div>
+  </div>
+  <!-- WELCOME SPLASH END -->
+
+  <div class="page-body">
+
+    <div class="event-banner" id="eventBanner" role="complementary" aria-label="Active event drop" style="display:none;">
+      <div class="eb-left">
+        <span class="eb-icon" aria-hidden="true">🎪</span>
+        <div>
+          <p class="eb-title" id="eventBannerTitle">⚡ EVENT DROP</p>
+          <p class="eb-sub" id="eventBannerSub">Limited-time event listings are active.</p>
+        </div>
+      </div>
+      <div>
+        <span class="eb-chip" style="display:block;text-align:center;">MODERATOR POSTED</span>
+      </div>
+    </div>
+
+    <div class="tab-row">
+      <div class="tabs" role="tablist" aria-label="Browse or manage listings">
+        <button class="tab active" id="tab-browse" role="tab" aria-selected="true"
+                aria-controls="panel-browse" onclick="switchTab('browse')">🏪 BROWSE</button>
+        <button class="tab" id="tab-mine" role="tab" aria-selected="false"
+                aria-controls="panel-mine" onclick="switchTab('mine')">📦 MY LISTINGS</button>
+      </div>
+      <div class="tab-actions">
+        {% if student and not is_moderator %}
+          <button class="apply-btn" id="modApplyBtn"
+                  onclick="openModApplyModal()"
+                  {% if has_pending_app %}disabled aria-disabled="true"{% endif %}>
+            {% if has_pending_app %}⏳ APPLICATION PENDING{% else %}🛡 BECOME MODERATOR{% endif %}
+          </button>
+        {% endif %}
+        <button class="post-btn" onclick="openPostModal()" aria-label="Post a new listing">+ POST ITEM</button>
+      </div>
+    </div>
+
+    <div id="panel-browse" role="tabpanel" aria-labelledby="tab-browse">
+      <div class="toolbar">
+        <div class="search-wrap">
+          <span class="si" aria-hidden="true">🔍</span>
+          <input type="search" id="searchInput" placeholder="Search listings..."
+                 aria-label="Search listings" oninput="filterListings()"/>
+        </div>
+        <div class="filter-btns" role="group" aria-label="Filter by category">
+          <button class="fb active" onclick="setCat(this,'all')" aria-pressed="true">ALL</button>
+          <button class="fb" onclick="setCat(this,'books')" aria-pressed="false">📚 BOOKS</button>
+          <button class="fb" onclick="setCat(this,'uniform')" aria-pressed="false">👔 UNIFORM</button>
+          <button class="fb" onclick="setCat(this,'electronics')" aria-pressed="false">💻 ELECTRONICS</button>
+          <button class="fb" onclick="setCat(this,'merch')" aria-pressed="false">🎽 MERCH</button>
+          <button class="fb" onclick="setCat(this,'food')" aria-pressed="false">🍱 FOOD</button>
+          <button class="fb" onclick="setCat(this,'event')" aria-pressed="false">⚡ EVENT</button>
+        </div>
+        <select class="sort-select" id="sortSelect" aria-label="Sort listings" onchange="filterListings()">
+          <option value="newest">NEWEST FIRST</option>
+          <option value="ending">EVENT DROPS FIRST</option>
+          <option value="price_asc">PRICE: LOW–HIGH</option>
+        </select>
+      </div>
+      <div class="listings-grid" id="listingsGrid" role="list" aria-label="Item listings"></div>
+    </div>
+
+    <div id="panel-mine" role="tabpanel" aria-labelledby="tab-mine" style="display:none;">
+      <div id="myListingsWrap" aria-label="Your listings"></div>
+    </div>
+
+  </div>
+</main>
+
+<div class="modal-overlay" id="postModal" role="dialog" aria-modal="true" aria-labelledby="post-modal-title">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="post-modal-title">POST AN <span class="g">ITEM</span></h2>
+      <button class="modal-close" onclick="closePostModal()" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label>ITEM PHOTO</label>
+        <div class="img-upload-area" id="uploadArea" aria-label="Upload item photo">
+          <input type="file" id="imgInput" accept="image/*" onchange="previewImg(event)" aria-label="Choose image"/>
+          <div id="uploadPlaceholder">
+            <div class="upload-icon" aria-hidden="true">📷</div>
+            <p class="upload-text">CLICK TO UPLOAD PHOTO</p>
+            <p class="upload-hint">JPG, PNG, WEBP — max 5MB</p>
+          </div>
+          <img id="imgPreview" alt="Item preview"/>
+        </div>
+      </div>
+      <div class="field"><label for="p-title">ITEM TITLE</label>
+        <input type="text" id="p-title" placeholder="e.g. CWTS Book, Art Appreciation Book"/></div>
+      <div class="field-row">
+        <div class="field"><label for="p-cat">CATEGORY</label>
+          <select id="p-cat">
+            <option value="books">📚 Books / Modules</option>
+            <option value="uniform">👔 Uniform / Clothing</option>
+            <option value="electronics">💻 Electronics</option>
+            <option value="merch">🎽 Merch / Accessories</option>
+            <option value="food">🍱 Food / Snacks</option>
+            <option value="services">🛠 Services</option>
+            <option value="other">📦 Other</option>
+          </select>
+        </div>
+        <div class="field"><label for="p-cond">CONDITION</label>
+          <select id="p-cond">
+            <option value="Brand New">Brand New</option>
+            <option value="Like New">Like New</option>
+            <option value="Good">Good</option>
+            <option value="Used">Used</option>
+            <option value="For Free">For Free 🎁</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>PRICE</label>
+        <div class="price-wrap">
+          <input type="number" id="p-price" placeholder="0.00" min="0" step="0.01"/>
+          <label class="free-toggle"><input type="checkbox" id="p-free" onchange="toggleFree(this)"/><span>FREE</span></label>
+        </div>
+      </div>
+      <div class="field"><label for="p-desc">DESCRIPTION</label>
+        <textarea id="p-desc" placeholder="Describe your item — condition details, why you're selling, meetup preferences..."></textarea></div>
+      <div class="field"><label for="p-contact">CONTACT <span style="color:var(--c-dim);font-size:.85em;">(OPTIONAL)</span></label>
+        <input type="text" id="p-contact" placeholder="e.g. m.me/yourname or 09XX-XXX-XXXX"/></div>
+
+      {% if is_moderator %}
+      <div class="event-toggle-row" role="group">
+        <div class="et-label">
+          <span class="et-title">⚡ EVENT DROP LISTING</span>
+          <span class="et-sub">Post as a moderator-coordinated event listing</span>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="p-event" onchange="toggleEventLabel(this)"/>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="event-label-field" id="p-event-label">
+        <span style="font-family:var(--font-px);font-size:5px;color:var(--c-gold);white-space:nowrap;">EVENT NAME</span>
+        <input type="text" id="p-event-label-input" placeholder="e.g. CICS Tech Fair 2025"/>
+      </div>
+      {% else %}
+      <input type="hidden" id="p-event" value="off"/>
+      {% endif %}
+
+      <div class="modal-actions">
+        <button class="btn-post" onclick="submitPost()">▶ POST LISTING</button>
+        <button class="btn-cancel" onclick="closePostModal()">CANCEL</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="detailModal" role="dialog" aria-modal="true" aria-labelledby="detail-modal-title">
+  <div class="detail-modal">
+    <div class="modal-header" style="padding:18px 20px 0;">
+      <h2 class="modal-title" id="detail-modal-title" style="font-size:7px;color:var(--c-muted);">ITEM DETAILS</h2>
+      <button class="modal-close" onclick="closeDetailModal()" aria-label="Close">✕</button>
+    </div>
+    <div id="detailContent"></div>
+  </div>
+</div>
+
+<!-- mod application -->
+<div class="modal-overlay" id="modApplyModal" role="dialog" aria-modal="true" aria-labelledby="mod-apply-title">
+  <div class="mod-apply-modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="mod-apply-title" style="font-size:8px;">🛡 APPLY AS <span style="color:var(--c-lime);">MODERATOR</span></h2>
+      <button class="modal-close" onclick="closeModApplyModal()" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="apply-info">
+        <p class="ai-label">WHAT MODERATORS CAN DO</p>
+        <div class="ai-item">Post official event drop listings directly</div>
+        <div class="ai-item">Remove listings that violate community guidelines</div>
+        <div class="ai-item">Help maintain a safe and fair marketplace</div>
+      </div>
+      <div class="field">
+        <label for="mod-reason">WHY DO YOU WANT TO BE A MODERATOR?</label>
+        <textarea id="mod-reason" placeholder="Tell us about yourself and why you'd like to help moderate the Student Center (minimum 30 characters)..." style="min-height:100px;"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-post" onclick="submitModApplication()">▶ SUBMIT APPLICATION</button>
+        <button class="btn-cancel" onclick="closeModApplyModal()">CANCEL</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="userCardModal" role="dialog" aria-modal="true">
+  <div class="modal" style="max-width: 400px;">
+    <div class="modal-header">
+      <h2 class="modal-title">💬 STUDENT <span class="g">CONTACT</span></h2>
+      <button class="modal-close" onclick="document.getElementById('userCardModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body" style="text-align: center;">
+      <div id="uc-avatar" class="big-avatar" style="margin: 0 auto 15px; width: 80px; height: 80px; font-size: 30px;">?</div>
+      <h3 id="uc-username" style="margin: 0; color: var(--c-light); font-size: 1.2rem;">Username</h3>
+      <p id="uc-fullname" style="color: var(--c-dim); font-size: 0.9rem; margin-top: 5px;">Full Name</p>
+      
+      <div style="background: var(--c-bg-alt); padding: 15px; border-radius: 8px; margin-top: 20px; text-align: left;">
+        <p style="margin:0 0 5px; color:var(--c-dim); font-size:0.75rem;">REGARDING ITEM</p>
+        <p id="uc-item" style="margin:0 0 15px; font-weight: 600; color: var(--c-lime);">Item Title</p>
+        
+        <p style="margin:0 0 5px; color:var(--c-dim); font-size:0.75rem;">EMAIL</p>
+        <p id="uc-email" style="margin:0 0 15px;">email@test.com</p>
+        
+        <p style="margin:0 0 5px; color:var(--c-dim); font-size:0.75rem;">CONTACT NUMBER</p>
+        <p id="uc-contact" style="margin:0;">09XX-XXX-XXXX</p>
+      </div>
+      <div class="modal-actions" style="margin-top: 20px;">
+        <button class="btn-cancel" onclick="document.getElementById('userCardModal').classList.remove('open')" style="width: 100%;">CLOSE</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="reserveReviewModal" role="dialog" aria-modal="true">
+  <div class="modal" style="max-width: 400px;">
+    <div class="modal-header">
+      <h2 class="modal-title">🔖 REVIEW <span class="p">RESERVATION</span></h2>
+      <button class="modal-close" onclick="document.getElementById('reserveReviewModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="color: var(--c-dim); text-align: center; margin-bottom: 20px;">
+        <strong id="rr-username" style="color: var(--c-light);">Student</strong> wants to reserve your item: <br/>
+        <strong id="rr-item" style="color: var(--c-lime);">Item Title</strong>
+      </p>
+      
+      <div style="background: var(--c-bg-alt); padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+        <p style="margin:0 0 5px; color:var(--c-dim); font-size:0.75rem;">BUYER DETAILS</p>
+        <p id="rr-fullname" style="margin:0 0 5px;">Full Name</p>
+        <p id="rr-email" style="margin:0 0 5px; color:var(--c-dim);">email@test.com</p>
+        <p id="rr-contact" style="margin:0; color:var(--c-dim);">Contact Num</p>
+      </div>
+      
+      <p style="font-size: 0.8rem; color: var(--c-dim); margin-bottom: 15px; text-align: center;">
+        If you accept, they will be notified and sent your contact information to arrange a meetup.
+      </p>
+      
+      <input type="hidden" id="rr-listing-id" />
+      
+      <div class="modal-actions" style="flex-direction: column; gap: 10px;">
+        <button class="btn-post" onclick="respondReservation('accept')" style="width: 100%;">✅ ACCEPT RESERVATION</button>
+        <button class="btn-cancel" onclick="respondReservation('reject')" style="width: 100%; border-color: #f08080; color: #f08080;">❌ DECLINE & REMOVE HOLD</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+{% include "includes/messages.html" %}
+
+<script src="{% static 'js/navgo.js' %}"></script>
+<script src="{% static 'js/student_center.js' %}"></script>
+<script>
+(function(){
+  const wrap = document.getElementById('splashStars');
+  if (!wrap) return;
+  for (let i = 0; i < 28; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;--dur:${2+Math.random()*3}s;animation-delay:${Math.random()*4}s;`;
+    wrap.appendChild(s);
+  }
+})();
+
+(function(){
+  fetch('/student-center/listings/?cat=all&q=&sort=ending')
+    .then(r => r.json())
+    .then(data => {
+      const events = (data.listings || []).filter(l => l.is_event && l.status === 'available');
+      if (events.length > 0) {
+        const banner = document.getElementById('eventBanner');
+        if (banner) {
+          banner.style.display = 'flex';
+          const titleEl = document.getElementById('eventBannerTitle');
+          const subEl   = document.getElementById('eventBannerSub');
+          if (titleEl && events[0].event_label) {
+            titleEl.textContent = '⚡ EVENT DROP — ' + events[0].event_label.toUpperCase();
+          }
+          if (subEl) {
+            subEl.textContent = `${events.length} active event listing${events.length > 1 ? 's' : ''} — posted by Student Center moderators`;
+          }
+        }
+      }
+    })
+    .catch(() => {});
+})();
+</script>
+</body>
+</html>

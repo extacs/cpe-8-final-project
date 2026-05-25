@@ -1,0 +1,175 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>LSPU NavGO | Choose your path</title>
+<link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="{% static 'css/navgo.css' %}"/>
+<link rel="stylesheet" href="{% static 'css/choose_path.css' %}"/>
+</head>
+<body
+  data-student-id="{{ student.user_id|default:'' }}"
+  data-student-name="{{ student.username|default:'' }}"
+  data-is-mod="{{ is_moderator|yesno:'true,false' }}">
+
+<div class="orb o1" aria-hidden="true"></div>
+<div class="orb o2" aria-hidden="true"></div>
+
+<nav role="navigation" aria-label="Main navigation">
+  <a href="{% url 'choose_path' %}" class="nav-logo" aria-label="LSPU NavGO home">
+    <div class="logo-hex" aria-hidden="true">
+      <img src="{% static 'img/small-logo.png' %}" width="34px" height="auto" alt="logo"> 
+    </div>
+    <div>
+      <div class="logo-name">LSPU NAVGO</div>
+      <div class="logo-sub">Virtual Student Hub</div>
+    </div>
+  </a>
+  <div class="nav-r">
+    <div class="nav-user-pill" aria-label="Logged in user">
+      <div class="nav-avatar" aria-hidden="true">{{ student.username|slice:":1"|upper|default:"S" }}</div>
+      <span class="nav-uname">{{ student.username|upper|default:"STUDENT" }}</span>
+    </div>
+    <button class="theme-btn" id="themeToggle" aria-label="Toggle theme">◑</button>
+  </div>
+</nav>
+
+<main class="page" role="main">
+
+  <div class="greeting" aria-labelledby="greeting-title">
+    <p class="greeting-tag">WELCOME BACK, {{ student.username|upper|default:"STUDENT" }}</p>
+    <h1 class="greeting-title" id="greeting-title">HOW WOULD YOU LIKE TO<br/><span class="acc">EXPLORE CAMPUS TODAY?</span></h1>
+    <p class="greeting-sub">Pick the experience that fits your mood — you can always switch later.</p>
+  </div>
+
+  <div class="path-grid" role="group" aria-label="Choose your path">
+
+    <!-- PATH A -->
+    <a href="#" class="path-card path-a" id="pathMapCard" aria-label="Path 1: Explore the pixel map (Alpha)">
+      <div class="path-visual map-bg" aria-hidden="true" style="position:relative;">
+        <div class="indev-overlay" aria-hidden="true">
+          <div class="indev-badge">
+            <span class="indev-dot"></span>
+            IN DEVELOPMENT
+          </div>
+          <p class="indev-sub">ALPHA BUILD</p>
+        </div>
+        <div class="mini-pin pin-a" aria-hidden="true"><div class="mini-dot"></div><span class="mini-lbl">CLINIC</span></div>
+        <div class="mini-pin alt pin-b" aria-hidden="true"><div class="mini-dot"></div><span class="mini-lbl">BAO</span></div>
+        <div class="mini-pin pin-c" aria-hidden="true"><div class="mini-dot"></div><span class="mini-lbl">BASKETBALL COURT</span></div> 
+      </div>
+      <div class="path-body">
+        <p class="path-num">PATH 01</p>
+        <h2 class="path-title">EXPLORE THE<br/>PIXEL MAP</h2>
+        <p class="path-desc">Walk Princess as your avatar through a 1:1 pixel recreation of the LSPU campus. Where you can navigate to buildings, discover locations, and access services like a virtual tour.</p>
+        <div class="path-for" aria-label="Best for">
+          <p class="path-for-label">BEST FOR</p>
+          <p class="path-for-text">Freshmans who doesn't know their way around the campus yet.</p>
+        </div>
+        <button class="path-cta" id="pathMapCta" aria-label="Try alpha version of pixel map">⚠ TRY ALPHA VERSION</button>
+      </div>
+    </a>
+
+    <!-- PATH BS -->
+    <a href="{% url 'dashboard' %}" class="path-card path-b" aria-label="Path 2: Quick web access">
+      <div class="path-visual map-bg" aria-hidden="true">
+        <div class="dash-preview">
+          <div class="dp-bar"><div class="dp-dot"></div><div class="dp-dot"></div><div class="dp-dot"></div></div>
+          <div class="dp-tile"><span class="dp-tile-icon">🛒</span><span class="dp-tile-text">BAO OFFICE</span></div>
+          <div class="dp-tile"><span class="dp-tile-icon">🏥</span><span class="dp-tile-text">CLINIC</span></div>
+          <div class="dp-alert">⚡ 1 ACTIVE ORDER</div>
+        </div>
+      </div>
+      <div class="path-body">
+        <p class="path-num">PATH 02</p>
+        <h2 class="path-title">QUICK ACCESS<br/>WEB VIEW</h2>
+        <p class="path-desc">Skip the map entirely and go straight to BAO ordering, clinic booking, your profile, and your records through a fast, direct interface.</p>
+        <div class="path-for" aria-label="Best for">
+          <p class="path-for-label">BEST FOR</p>
+          <p class="path-for-text">Students who needs accessibility of services (idk ano idudugtong dito, tuloy niyo)</p>
+        </div>
+        <button class="path-cta" aria-label="Go to quick access dashboard">▶ GO TO DASHBOARD</button>
+      </div>
+    </a>
+
+  </div>
+</main>
+
+
+<div class="alpha-overlay" id="alphaOverlay" role="dialog" aria-modal="true" aria-labelledby="alpha-modal-title">
+  <div class="alpha-modal">
+    <div class="am-header">
+      <p class="am-tag"><span class="am-tag-dot"></span>ALPHA BUILD · IN DEVELOPMENT</p>
+      <h2 class="am-title" id="alpha-modal-title">ENTER THE<br/>PIXEL MAP?</h2>
+    </div>
+    <div class="am-body">
+      <p class="am-desc">
+        The Pixel Map is currently in active development. You may encounter
+        incomplete areas, missing features, or unexpected behavior.
+      </p>
+      <div class="am-warn">
+        <strong>⚠ Alpha Warning:</strong> This is an early build. Some
+        campus locations may not be fully mapped yet and services accessed
+        through the map may behave differently than the web view.
+      </div>
+      <div class="am-actions">
+        <button class="am-btn-yes" id="alphaConfirmYes">▶ YES, ENTER ALPHA</button>
+        <button class="am-btn-no"  id="alphaConfirmNo">✕ GO BACK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let light=false;
+  document.getElementById('themeToggle').addEventListener('click',()=>{
+    light=!light;
+    document.documentElement.setAttribute('data-theme',light?'light':'');
+  });
+
+  document.querySelectorAll('.path-cta').forEach(btn=>{
+    btn.addEventListener('click', e => e.stopPropagation());
+  });
+
+  const alphaOverlay  = document.getElementById('alphaOverlay');
+  const alphaYes      = document.getElementById('alphaConfirmYes');
+  const alphaNo       = document.getElementById('alphaConfirmNo');
+  const pathMapCard   = document.getElementById('pathMapCard');
+  const pathMapCta    = document.getElementById('pathMapCta');
+  const GAME_URL      = "{% url 'game' %}";
+
+  function openAlphaModal(e) {
+    if (e) e.preventDefault();
+    alphaOverlay.classList.add('open');
+  }
+
+  function closeAlphaModal() {
+    alphaOverlay.classList.remove('open');
+  }
+
+  if (pathMapCard) pathMapCard.addEventListener('click', openAlphaModal);
+  if (pathMapCta)  pathMapCta.addEventListener('click',  openAlphaModal);
+
+  if (alphaYes) {
+    alphaYes.addEventListener('click', () => {
+      window.location.href = GAME_URL;
+    });
+  }
+
+  if (alphaNo) alphaNo.addEventListener('click', closeAlphaModal);
+
+  if (alphaOverlay) {
+    alphaOverlay.addEventListener('click', function(e) {
+      if (e.target === this) closeAlphaModal();
+    });
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeAlphaModal();
+  });
+</script>
+</body>
+</html>

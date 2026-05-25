@@ -1,0 +1,308 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>LSPU NavGO | BAO Staff Dashboard</title>
+<link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+<link rel="stylesheet" href="{% static 'css/student_center.css' %}"/>
+<link rel="stylesheet" href="{% static 'css/navgo.css' %}"/>
+<link rel="stylesheet" href="{% static 'css/staff_bao.css' %}"/>
+</head>
+<body>
+
+<nav class="topnav" role="navigation" aria-label="Main navigation">
+  <a href="{% url 'bao_staff' %}" class="nav-logo" aria-label="LSPU NAVGO home">
+    <div class="logo-hex" aria-hidden="true">
+      <img src="{% static 'img/small-logo.png' %}" width="34px" height="auto" alt="logo"> 
+    </div>
+    <div><div class="logo-name">LSPU NAVGO</div><div class="logo-sub">Virtual Student Hub</div></div>
+  </a>
+  <div class="nav-r">
+    <div class="nav-user">
+      <div class="nav-avatar" aria-hidden="true">B</div>
+      <span class="nav-uname">{{ staff_name|upper|default:"STAFF" }}</span>
+    </div>
+    <button class="nav-btn" id="themeToggle" aria-label="Toggle theme">◑</button>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<aside class="sidebar" id="sidebar" role="navigation" aria-label="Staff navigation">
+  <div class="staff-sidebar-note">⚕ BAO STAFF ACCESS</div>
+  <div class="sb-section">
+    <p class="sb-label">MANAGE</p>
+    <a href="{% url 'bao_staff' %}" class="sb-link active" aria-current="page">
+      <span class="sb-icon">🛒</span> BAO ORDERS
+    </a>
+  </div>
+  <div class="divider"></div>
+  <div class="sb-section">
+    <p class="sb-label">CONNECT WITH STUDENTS</p>
+    <a href="{% url 'staff_sc_bao' %}" class="sb-link"><span class="sb-icon" aria-hidden="true">🏪</span> STUDENT CENTER</a>
+  </div>
+  <div class="sb-bottom">
+    <a href="{% url 'login' %}" class="sb-link"><span class="sb-icon">⏏</span> LOG OUT</a>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="inner">
+
+    <div class="ph">
+      <p class="ph-tag">STAFF · BUSINESS AFFAIRS OFFICE</p>
+      <h1 class="ph-title">BUSINESS AFFAIRS OFFICE <span class="acc">MANAGEMENT</span></h1>
+      <p class="ph-sub">View and process student orders. Manage the item catalog and stock levels.</p>
+    </div>
+
+
+    <div class="stats-row">
+      <div class="stat-chip">
+        <div class="sc-num lime">{{ orders|length }}</div>
+        <div class="sc-label">TOTAL<br/>ORDERS</div>
+      </div>
+      <div class="stat-chip">
+        <div class="sc-num lime">
+          {% with pending_count=0 %}
+            {% for o in orders %}{% if o.status == 'pending' %}{{ forloop.counter0|add:1 }}{% endif %}{% endfor %}
+          {% endwith %}
+          {{ orders|dictsort:"status"|length }}
+
+        </div>
+        <div class="sc-label">PENDING<br/>ORDERS</div>
+      </div>
+      <div class="stat-chip">
+        <div class="sc-num warn">
+          {% for o in orders %}{% if o.status == 'ready' %}★{% endif %}{% endfor %}
+        </div>
+        <div class="sc-label">READY<br/>TO CLAIM</div>
+      </div>
+      <div class="stat-chip">
+        <div class="sc-num purple">{{ items|length }}</div>
+        <div class="sc-label">CATALOG<br/>ITEMS</div>
+      </div>
+    </div>
+
+    <!-- Tab bar -->
+    <div class="staff-tabs" role="tablist">
+      <button class="stab active" id="tab-orders" role="tab" aria-selected="true"
+              onclick="switchStaffTab('orders')">🛒 ORDERS</button>
+      <button class="stab" id="tab-inventory" role="tab" aria-selected="false"
+              onclick="switchStaffTab('inventory')">📦 INVENTORY</button>
+    </div>
+
+
+
+    <div class="stab-panel active" id="stab-orders">
+
+      <div class="filter-bar">
+        <span class="fbar-label">FILTER:</span>
+        <button class="fbar-btn active" onclick="filterOrders(this,'all')">ALL</button>
+        <button class="fbar-btn" onclick="filterOrders(this,'pending')">PENDING</button>
+        <button class="fbar-btn" onclick="filterOrders(this,'ready')">READY</button>
+        <button class="fbar-btn" onclick="filterOrders(this,'claimed')">CLAIMED</button>
+        <button class="fbar-btn" onclick="filterOrders(this,'cancelled')">CANCELLED</button>
+      </div>
+
+      {% if orders %}
+        <div class="order-grid" id="orderGrid">
+          {% for order in orders %}
+            <div class="order-card {{ order.status }}" data-status="{{ order.status }}"
+                 id="order-card-{{ order.pk }}">
+              <div class="oc-header">
+                <span class="oc-num">{{ order.order_number }}</span>
+                <span class="oc-status s-{{ order.status }}">
+                  {{ order.get_status_display|upper }}
+                </span>
+              </div>
+              <div class="oc-body">
+                <p class="oc-student">
+                  👤 {{ order.student_user_id }}
+                  {% if order.student_name %} · {{ order.student_name }}{% endif %}
+                </p>
+                <div class="oc-items">
+                  {% for line in order.items.all %}
+                    <span class="oc-item">{{ line.item_name }}{% if line.size %} — {{ line.size }}{% endif %}</span>
+                  {% endfor %}
+                </div>
+                {% if order.note %}
+                  <p class="oc-note">📝 {{ order.note }}</p>
+                {% endif %}
+                <p class="oc-date">PLACED: {{ order.placed_at|date:"M j, Y · g:i A" }}</p>
+                <div class="oc-actions">
+                  {% if order.status == 'pending' %}
+                    <button class="oc-btn mark-ready"
+                            onclick="updateOrderStatus({{ order.pk }},'ready',this)">
+                      ▶ MARK READY
+                    </button>
+                    <button class="oc-btn mark-cancel"
+                            onclick="updateOrderStatus({{ order.pk }},'cancelled',this)">
+                      CANCEL
+                    </button>
+                  {% elif order.status == 'ready' %}
+                    <button class="oc-btn mark-claimed"
+                            onclick="updateOrderStatus({{ order.pk }},'claimed',this)">
+                      ✓ MARK CLAIMED
+                    </button>
+                    <button class="oc-btn mark-cancel"
+                            onclick="updateOrderStatus({{ order.pk }},'cancelled',this)">
+                      CANCEL
+                    </button>
+                  {% elif order.status == 'claimed' %}
+                    <span style="font-family:var(--font-px);font-size:5px;color:var(--c-dim);">
+                      ✓ Claimed
+                      {% if order.processed_by %} · by {{ order.processed_by }}{% endif %}
+                    </span>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-orders">
+          <div class="eo-icon" aria-hidden="true">📋</div>
+          <p class="eo-text">NO ORDERS YET.<br/>STUDENT ORDERS WILL APPEAR HERE.</p>
+        </div>
+      {% endif %}
+    </div>
+
+
+    <div class="stab-panel" id="stab-inventory">
+      {% if items %}
+        <div class="inv-table-wrap" style="margin-bottom: 50px;">
+          <table class="inv-table" aria-label="Inventory">
+            <thead>
+              <tr>
+                <th></th>
+                <th>ITEM</th>
+                <th>CATEGORY</th>
+                <th>SIZES</th>
+                <th>STOCK STATUS</th>
+                <th>RESTOCK DATE</th>
+                <th>ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in items %}
+                <tr id="inv-row-{{ item.pk }}">
+                  <td><span class="inv-emoji"><img src="{{ item.image_base64 }}" alt="📦" style="width:80px; height:80px; object-fit:cover; display:block;"/></span></td>
+                  <td><span class="inv-name">{{ item.name }}</span></td>
+                  <td><span class="inv-cat">{{ item.get_category_display|upper }}</span></td>
+                  <td>
+                    <span class="inv-sizes">
+                      {% if item.sizes %}{{ item.sizes }}{% else %}—{% endif %}
+                    </span>
+                  </td>
+                  <td>
+                    <select class="status-select"
+                            onchange="updateStock({{ item.pk }}, this.value, '{{ item.pk }}')"
+                            id="stock-select-{{ item.pk }}">
+                      <option value="in_stock"  {% if item.stock_status == 'in_stock'  %}selected{% endif %}>In Stock</option>
+                      <option value="low_stock" {% if item.stock_status == 'low_stock' %}selected{% endif %}>Low Stock</option>
+                      <option value="oos"       {% if item.stock_status == 'oos'       %}selected{% endif %}>Out of Stock</option>
+                    </select>
+                  </td>
+                  <td>
+                    <input type="date" class="restock-input"
+                           id="restock-{{ item.pk }}"
+                           value="{{ item.restock_date|date:'Y-m-d'|default:'' }}"
+                           onchange="updateStock({{ item.pk }}, document.getElementById('stock-select-{{ item.pk }}').value, '{{ item.pk }}')"
+                           {% if item.stock_status != 'oos' %}style="opacity:.3"{% endif %}/>
+                  </td>
+                  <td>
+                    <button class="oc-btn mark-cancel"
+                            onclick="deleteItem({{ item.pk }}, this)">
+                      ✕ REMOVE
+                    </button>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="empty-orders">
+          <div class="eo-icon" aria-hidden="true">📦</div>
+          <p class="eo-text">NO ITEMS IN CATALOG.<br/>ADD YOUR FIRST ITEM BELOW.</p>
+        </div>
+      {% endif %}
+
+      <div class="add-item-card">
+        <h2 class="aic-title">ADD NEW CATALOG ITEM</h2>
+        <div class="form-grid">
+          <div class="fg-field">
+            <label for="newName">ITEM NAME</label>
+            <input type="text" id="newName" placeholder="e.g. PE Uniform"/>
+          </div>
+          <div class="fg-field">
+            <label for="newCat">CATEGORY</label>
+            <select id="newCat">
+              <option value="uniform">Uniform</option>
+              <option value="id">ID / Lace</option>
+              <option value="supplies">Supplies</option>
+            </select>
+          </div>
+          <div class="fg-field">
+            <label for="newStatus">STOCK STATUS</label>
+            <select id="newStatus">
+              <option value="in_stock">In Stock</option>
+              <option value="low_stock">Low Stock</option>
+              <option value="oos">Out of Stock</option>
+            </select>
+          </div>
+          <div class="fg-field">
+            <label for="newSizes">SIZES (comma-separated, leave blank if N/A)</label>
+            <input type="text" id="newSizes" placeholder="S,M,L,XL,XXL"/>
+          </div>
+          <div class="fg-field">
+            <label for="newRestock">RESTOCK DATE (if OOS)</label>
+            <input type="date" id="newRestock"/>
+          </div>
+          <div class="fg-field fg-full">
+            <label for="newDesc">DESCRIPTION</label>
+            <textarea id="newDesc" placeholder="Brief item description..."></textarea>
+          </div>
+          <div class="field fg-full">
+            <label>ITEM PHOTO</label>
+            <div class="img-upload-area" id="uploadArea" aria-label="Upload item photo">
+              <input type="file" id="imgInput" accept="image/*" onchange="previewImg(event)" aria-label="Choose image"/>
+              <div id="uploadPlaceholder">
+                <div class="upload-icon" aria-hidden="true">📷</div>
+                <p class="upload-text">CLICK TO UPLOAD PHOTO</p>
+                <p class="upload-hint">JPG, PNG, WEBP — max 5MB</p>
+              </div>
+              <img id="imgPreview" alt="Item preview"/>
+            </div>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-lime" onclick="saveNewItem()">▶ ADD ITEM</button>
+          <button class="btn btn-ghost" onclick="clearNewItemForm()">CLEAR</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+{% include "includes/messages.html" %}
+
+<script>
+  const API_URLS = {
+    updateOrderStatus: "{% url 'bao_update_order_status' %}",
+    updateStock: "{% url 'bao_update_stock' %}",
+    saveItem: "{% url 'bao_save_item' %}",
+    deleteItem: "{% url 'bao_delete_item' %}"
+  };
+</script>
+
+<script src="{% static 'js/navgo.js' %}"></script>
+<script src="{% static 'js/staff_bao.js' %}"></script>
+{% comment %} <script src="{% static 'js/student_center.js' %}"></script> {% endcomment %}
+</body>
+</html>

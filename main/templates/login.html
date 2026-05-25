@@ -1,0 +1,257 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Sign In | LSPU NavGO</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+</head>
+<body>
+
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<div class="page">
+    <nav class="topbar" role="navigation" aria-label="Site navigation">
+        <a href="{% url 'home' %}" class="logo" aria-label="LSPU NavGO home">
+            <div class="logo-icon" aria-hidden="true">
+                <img src="{% static 'img/small-logo.png' %}" width="38" height="auto" alt=""/>
+            </div>
+            <div>
+                <div class="logo-text">LSPU NAVGO</div>
+                <div class="logo-sub">Virtual Student Hub</div>
+            </div>
+        </a>
+        <button class="theme-btn" id="themeToggle" aria-label="Toggle light/dark theme">
+            <span style="font-size:medium;">◑</span> DARK
+        </button>
+    </nav>
+
+    <!-- ── ROLE SELECTOR ── -->
+    <div class="role-wrap" role="group" aria-label="Select your role">
+        <p class="role-label">I AM SIGNING IN AS A:</p>
+        <div class="role-tabs">
+            <button class="role-tab active" id="roleStudent"
+                    aria-pressed="true" onclick="setRole('student')">
+                🎒 STUDENT
+            </button>
+            <button class="role-tab" id="roleStaff"
+                    aria-pressed="false" onclick="setRole('staff')">
+                🏫 STAFF
+            </button>
+        </div>
+    </div>
+
+    <!-- ── AUTH CARD ── -->
+    <div class="card" role="main">
+
+        <div class="auth-tabs" role="tablist" aria-label="Login or Register">
+            <button class="auth-tab active" id="tabLogin"
+                    role="tab" aria-selected="true" aria-controls="sectionLogin"
+                    onclick="setTab('login')">
+                LOGIN
+            </button>
+            <button class="auth-tab" id="tabRegister"
+                    role="tab" aria-selected="false" aria-controls="sectionRegister"
+                    onclick="setTab('register')">
+                REGISTER
+            </button>
+        </div>
+
+        <div class="form-body">
+
+            <!-- ═══════════════════════════════
+                 LOGIN PANEL
+            ═══════════════════════════════ -->
+            <div class="form-section active" id="sectionLogin"
+                 role="tabpanel" aria-labelledby="tabLogin">
+
+                <form action="{% url 'login' %}" method="POST" novalidate>
+                    {% csrf_token %}
+
+                    <input type="hidden" name="authentication" value="loggingIn"/>
+                    <input type="hidden" name="role" id="loginRole" value="student"/>
+
+                    <div class="field">
+                        <label id="login-id-label">
+                            EMAIL OR <span id="loginIdType">STUDENT</span> ID
+                        </label>
+                        <input type="text" id="loginId" name="uid"
+                               placeholder="e.g. user@email.com or 0124-0958"
+                               aria-labelledby="login-id-label"
+                               autocomplete="username"
+                               required/>
+                        <p class="field-hint" id="loginIdHint">
+                            You can use either your email or your student ID.
+                        </p>
+                    </div>
+
+                    <div class="field">
+                        <label for="loginPw">PASSWORD</label>
+                        <div class="pw-wrap">
+                            <input type="password" name="password" id="loginPw"
+                                   placeholder="••••••••"
+                                   autocomplete="current-password"
+                                   required/>
+                            <button type="button" class="pw-toggle"
+                                    onclick="togglePw('loginPw', this)"
+                                    aria-label="Toggle password visibility">
+                                <svg width="16" height="16" viewBox="0 0 24 24"
+                                     fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-foot" style="text-align:right;margin-top:-8px;margin-bottom:8px;">
+                        <a href="#" aria-label="Forgot your password?">Forgot password?</a>
+                    </div>
+
+                    <button class="btn-primary" type="submit" aria-label="Log in">
+                        <span class="btn-shimmer" aria-hidden="true"></span>
+                        ▶ LOG IN
+                    </button>
+                </form>
+
+                <div class="sprite-bar" aria-hidden="true">
+                    <div class="pixel-dot"></div>
+                    <div class="pixel-dot"></div>
+                    <div class="pixel-dot"></div>
+                    <div class="pixel-dot"></div>
+                    <div class="pixel-dot"></div>
+                    <span class="sprite-label">Connecting to campus...</span>
+                </div>
+                <p class="form-foot">
+                    No account yet?
+                    <a href="#" onclick="setTab('register'); return false;">Register here</a>
+                </p>
+            </div><!-- /sectionLogin -->
+
+
+            <!-- ═══════════════════════════════
+                 REGISTER PANEL
+            ═══════════════════════════════ -->
+            <div class="form-section" id="sectionRegister"
+                role="tabpanel" aria-labelledby="tabRegister">
+
+                <form action="{% url 'login' %}" method="POST" novalidate>
+                    {% csrf_token %}
+
+                    <input type="hidden" name="authentication" value="signingUp"/>
+                    <input type="hidden" name="role" id="registerRole" value="student"/>
+
+                    <div id="staffRegBlocker" style="display: none; text-align: center; padding: 40px 10px;">
+                        <div style="font-size: 2.5rem; margin-bottom: 15px;">🔒</div>
+                        <h3 style="margin-bottom: 10px; font-size: 1rem; color: var(--text);">Staff Registration Disabled</h3>
+                        <p style="color: var(--text); font-size: 0.85rem; line-height: 1.5; opacity: 0.8;">
+                            Staff account creation is exclusively processed by the site administration. <br><br>Please contact the us directly to request your official staff credentials.
+                        </p>
+                    </div>
+
+                    <div id="regFormContent">
+                        <div class="field">
+                            <label for="regEmail">EMAIL ADDRESS</label>
+                            <input type="email" name="email" id="regEmail" value="{{ submitted_email|default_if_none:'' }}"
+                                placeholder="yourname@email.com"
+                                autocomplete="email"
+                                required/>
+                        </div>
+
+                        <div class="field">
+                            <label id="reg-id-label">
+                                <span id="regIdType">STUDENT</span> ID NUMBER
+                            </label>
+                            <input type="text" id="regId" name="uid" value="{{ submitted_uid|default_if_none:'' }}"
+                                placeholder="e.g. 0124-0958"
+                                aria-labelledby="reg-id-label"
+                                autocomplete="off"
+                                required/>
+                            <p class="field-hint" id="regIdHint">
+                                Your university-issued student ID.
+                            </p>
+                        </div>
+
+                        <div class="field">
+                            <label for="regPw">PASSWORD</label>
+                            <div class="pw-wrap">
+                                <input type="password" name="password" id="regPw" value="{{ submitted_pw|default_if_none:'' }}"
+                                    placeholder="At least 8 characters"
+                                    autocomplete="new-password"
+                                    required/>
+                                <button type="button" class="pw-toggle"
+                                        onclick="togglePw('regPw', this)"
+                                        aria-label="Toggle password visibility">
+                                    <svg width="16" height="16" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                        <circle cx="12" cy="12" r="3"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label for="regPwConfirm">CONFIRM PASSWORD</label>
+                            <div class="pw-wrap">
+                                <input type="password" name="password" id="regPwConfirm" value="{{ submitted_confirm_pw|default_if_none:'' }}"
+                                    placeholder="••••••••"
+                                    autocomplete="new-password"
+                                    required/>
+                                <button type="button" class="pw-toggle"
+                                        onclick="togglePw('regPwConfirm', this)"
+                                        aria-label="Toggle confirm password visibility">
+                                    <svg width="16" height="16" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                        <circle cx="12" cy="12" r="3"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <button class="btn-primary" type="submit" aria-label="Create account">
+                            <span class="btn-shimmer" aria-hidden="true"></span>
+                            ▶ CREATE ACCOUNT
+                        </button>
+                    </div></form>
+
+                <p class="form-foot" style="margin-top:18px;">
+                    Already have an account?
+                    <a href="#" onclick="setTab('login'); return false;">Log in</a>
+                </p>
+            </div> <!-- /sectionRegister -->
+
+        </div><!-- /form-body -->
+    </div><!-- /card -->
+
+    <a href="{% url 'home' %}" class="back-link" aria-label="Back to home page">
+        <span class="back-arrow" aria-hidden="true"></span>
+        BACK TO HOME
+    </a>
+
+</div><!-- /page -->
+
+
+{% include "includes/messages.html" %}
+
+<script src="{% static 'js/login.js' %}"></script>
+
+{% if show_signup %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        if (typeof setTab === "function") {
+            setTab('register'); 
+        }
+        
+    });
+</script>
+{% endif %}
+
+</body>
+</html>

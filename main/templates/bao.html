@@ -1,0 +1,464 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>LSPU NavGO | Business Affairs Office</title>
+<link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+<link rel="stylesheet" href="{% static 'css/navgo.css' %}"/>
+<link rel="stylesheet" href="{% static 'css/bao.css' %}"/>
+</head>
+
+
+<body
+  data-student-id="{{ student.user_id|default:'' }}"
+  data-student-name="{{ student.username|default:'' }}"
+  data-student-sec="{{ student.section|default:'' }}">
+
+<nav class="topnav" role="navigation" aria-label="Main navigation">
+  <a href="{% url 'dashboard' %}" class="nav-logo" aria-label="LSPU NAVGO home">
+    <div class="logo-hex" aria-hidden="true">
+      <img src="{% static 'img/small-logo.png' %}" width="34px" height="auto" alt="logo"> 
+    </div>
+    <div><div class="logo-name">LSPU NAVGO</div><div class="logo-sub">Virtual Student Hub</div></div>
+  </a>
+  <div class="nav-r">
+    <div class="nav-user">
+      <div class="nav-avatar" aria-hidden="true" {% if student.profile_picture_b64 %}style="background-image: url('{{ student.profile_picture_b64 }}'); background-size: cover; background-position: center; color: transparent;"{% endif %}>{{ student.username|slice:":1"|upper|default:"S" }}</div>
+      <span class="nav-uname">{{ student.username|upper|default:"STUDENT" }}</span>
+    </div>
+    <div style="position:relative;">
+      <button class="nav-btn" id="cartBtn" onclick="toggleCart()"
+              aria-label="Open cart" aria-expanded="false">🛒 CART</button>
+      <span class="cart-count-badge" id="cartCount" aria-live="polite" aria-label="0 items">0</span>
+    </div>
+    
+    <div class="notif-wrap" id="notifWrap">
+     <button class="notif-btn" id="notifBtn"
+             aria-label="Notifications" aria-expanded="false"
+             aria-haspopup="true">
+       🔔
+       <span class="notif-badge" id="notifBadge" aria-live="polite"></span>
+     </button>
+     <div class="notif-dropdown" id="notifDropdown" role="menu">
+       <div class="notif-header">
+         <span class="notif-header-title">NOTIFICATIONS</span>
+         <button class="notif-mark-all" id="notifMarkAll">MARK ALL READ</button>
+       </div>
+       <div class="notif-list" id="notifList"></div>
+       <div class="notif-footer">
+         <a href="#" class="notif-footer-link">ALL CAUGHT UP</a>
+       </div>
+     </div>
+   </div>
+
+    <button class="nav-btn" id="themeToggle" aria-label="Toggle theme">◑</button>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<aside class="sidebar" id="sidebar" role="navigation" aria-label="Sidebar navigation">
+  <div class="sb-section">
+    <p class="sb-label">STUDENT</p>
+      <a href="{% url 'dashboard' %}" class="sb-link"><span class="sb-icon">⬛</span> DASHBOARD</a>
+      <a href="{% url 'dashboard' %}#profile" class="sb-link"><span class="sb-icon">👤</span> MY PROFILE</a>
+      <a href="{% url 'dashboard' %}#records" class="sb-link"><span class="sb-icon">📋</span> MY RECORDS</a>
+      {% comment %} <a href="{% url 'dashboard' %}" class="sb-link" id="nav-dashboard" onclick="showPage('dashboard');return false;"><span class="sb-icon" aria-hidden="true">⬛</span> DASHBOARD</a>
+      <a href="{% url 'dashboard' %}" class="sb-link" id="nav-profile" onclick="showPage('profile');return false;"><span class="sb-icon" aria-hidden="true">👤</span> MY PROFILE</a>
+      <a href="{% url 'dashboard' %}" class="sb-link" id="nav-records" onclick="showPage('records');return false;"><span class="sb-icon" aria-hidden="true">📋</span> MY RECORDS</a> {% endcomment %}
+  </div>
+  <div class="divider"></div>
+  <div class="sb-section">
+    <p class="sb-label">SERVICES</p>
+    <a href="{% url 'bao' %}" class="sb-link active" aria-current="page"><span class="sb-icon">🛒</span> BAO</a>
+    <a href="{% url 'clinic' %}" class="sb-link"><span class="sb-icon">🏥</span> CLINIC</a>
+    <a href="{% url 'student_center' %}" class="sb-link"><span class="sb-icon">🏪</span> STUDENT CENTER</a>
+  </div>
+  <div class="divider"></div>
+  <div class="sb-section">
+    <p class="sb-label">NAVIGATION</p>
+    <a href="{% url 'game' %}" class="sb-link"><span class="sb-icon">🗺️</span> CHANGE PATH</a>
+  </div>
+  <div class="sb-bottom">
+    <a href="{% url 'login' %}" class="sb-link"><span class="sb-icon">⏏</span> LOG OUT</a>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="page-panel active" id="panel-catalog">
+    <div class="inner">
+      <div class="ph">
+        <p class="ph-tag">SERVICE 01</p>
+        <h1 class="ph-title">BAO <span class="acc">CATALOG</span></h1>
+        <p class="ph-sub">Browse available items, check stock, and add to your cart. Claim at the BAO counter with your generated form.</p>
+      </div>
+
+      <div class="toolbar" role="search">
+        <div class="search-wrap">
+          <span class="search-icon" aria-hidden="true">🔍</span>
+          <input type="search" id="searchInput" placeholder="Search items..."
+                 aria-label="Search catalog" oninput="filterProducts()"/>
+        </div>
+        <div class="filter-btns" role="group" aria-label="Filter by category">
+          <button class="fb active" onclick="setCat(this,'all')" aria-pressed="true">ALL</button>
+          <button class="fb" onclick="setCat(this,'uniform')" aria-pressed="false">UNIFORM</button>
+          <button class="fb" onclick="setCat(this,'id')" aria-pressed="false">ID / LACE</button>
+          <button class="fb" onclick="setCat(this,'supplies')" aria-pressed="false">SUPPLIES</button>
+        </div>
+      </div>
+
+      <!-- == PRODUCT GRID (rendered from DB, although it goes through views muna)  == -->
+      <div class="prod-grid" id="prodGrid" role="list" aria-label="Product catalog">
+
+        {% for item in items %}
+  
+        <div class="prod-card {% if item.stock_status == 'in_stock' %}in-stock{% elif item.stock_status == 'low_stock' %}in-stock low-stock{% else %}oos{% endif %}"
+            data-cat="{{ item.category }}"
+            data-name="{{ item.name|lower }}"
+            role="listitem">
+
+          <span class="stock-badge {% if item.stock_status == 'in_stock' %}badge-in{% elif item.stock_status == 'low_stock' %}badge-low{% else %}badge-oos{% endif %}">
+            {% if item.stock_status == 'in_stock' %}IN STOCK
+            {% elif item.stock_status == 'low_stock' %}LOW STOCK
+            {% else %}OUT OF STOCK{% endif %}
+          </span>
+
+          <div class="prod-img" aria-hidden="true">
+            <img src="{{ item.image_base64 }}" alt="📦" style="width:100%; height:100%; object-fit:cover; display:block;"/>
+          </div>
+
+          <div class="prod-body">
+            <p class="prod-category">{{ item.get_category_display|upper }}</p>
+            <h2 class="prod-name">{{ item.name|upper }}</h2>
+            <p class="prod-desc">{{ item.description }}</p>
+
+            {% if item.sizes %}
+              <div class="size-row" role="group" aria-label="Select size">
+                {% for size in item.sizes_list %}
+                  <button class="size-btn {% if forloop.first %}active{% endif %}"
+                          onclick="selectSize(this)"
+                          aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}">
+                    {{ size }}
+                  </button>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            {# restock notice, nalabas lang pag OOS #}
+            {% if item.stock_status == 'oos' and item.restock_date %}
+              <div class="restock-notice" role="note">
+                <span class="restock-icon" aria-hidden="true">📅</span>
+                <span class="restock-text">
+                  AVAILABLE ON: {{ item.restock_date|date:"M j, Y"|upper }}
+                </span>
+              </div>
+            {% endif %}
+
+            {% if item.stock_status == 'oos' %}
+              <button class="add-btn" disabled aria-disabled="true"
+                      style="margin-top:auto;">UNAVAILABLE</button>
+            {% else %}
+              <button class="add-btn"
+                      onclick="addToCart(this,'{{ item.name }}','{{ item.category }}')"
+                      aria-label="Add {{ item.name }} to cart"
+                      style="margin-top:auto;">▶ ADD TO CART</button>
+            {% endif %}
+
+          </div>
+        </div>
+
+      {% empty %}
+        <div class="empty-catalog" style="grid-column:1/-1;" role="status">
+          <div class="ec-icon" aria-hidden="true">🛒</div>
+          <p class="ec-text">NO ITEMS IN THE CATALOG YET.<br/>CHECK BACK SOON.</p>
+        </div>
+      {% endfor %}
+
+      </div>
+    </div>
+  </div>
+
+
+  <div class="page-panel" id="panel-cart">
+    <div class="inner">
+      <nav class="breadcrumb no-print" aria-label="Breadcrumb">
+        <a href="#" class="bc-link" onclick="showPanel('catalog');return false;">CATALOG</a>
+        <span class="bc-sep">›</span><span class="bc-cur">CART</span>
+        <span class="bc-sep">›</span>
+        <span style="font-family:var(--font-px);font-size:5px;color:var(--c-dim);letter-spacing:.1em;">
+          CONFIRMATION
+        </span>
+      </nav>
+
+      <div class="steps" role="list">
+        <div class="step done" role="listitem"><div class="step-num">✓</div><span class="step-label">CATALOG</span></div>
+        <div class="step-line"></div>
+        <div class="step current" role="listitem"><div class="step-num">2</div><span class="step-label">REVIEW CART</span></div>
+        <div class="step-line"></div>
+        <div class="step future" role="listitem"><div class="step-num">3</div><span class="step-label">CONFIRMATION</span></div>
+      </div>
+
+      <div class="checkout-grid">
+        <div>
+          <div class="cart-panel" aria-label="Cart items">
+            <div class="panel-header">
+              <h1 class="panel-title">REVIEW YOUR ORDER</h1>
+              <span class="panel-count" id="panelCount" aria-live="polite">0 ITEMS</span>
+            </div>
+            <div id="cartRowsWrap">
+              <div class="cart-empty-state" id="emptyState">
+                <div class="ces-icon" aria-hidden="true">🛒</div>
+                <p class="ces-title">YOUR CART IS EMPTY</p>
+                <p class="ces-sub">Go back to the catalog to add items.</p>
+              </div>
+            </div>
+            <div class="note-section">
+              <p class="note-label">ORDER NOTE (OPTIONAL)</p>
+              <textarea class="note-input" id="orderNote"
+                        placeholder="Any special notes for the BAO staff?"></textarea>
+            </div>
+          </div>
+          <a href="#" class="back-link" onclick="showPanel('catalog');return false;">
+            ← BACK TO CATALOG
+          </a>
+        </div>
+
+        <div class="summary-panel" aria-label="Order summary">
+          <div class="sum-header"><h2 class="sum-title">ORDER SUMMARY</h2></div>
+          <div class="sum-body">
+            <div class="autofill-box">
+              <p class="af-label">AUTO-FILLED FROM PROFILE</p>
+              <div class="af-row">
+                <span class="af-k">Student ID</span>
+                <span class="af-v">{{ student.user_id|default:"—" }}</span>
+              </div>
+              <div class="af-row">
+                <span class="af-k">Name</span>
+                <span class="af-v">{{ student.username|default:"—" }}</span>
+              </div>
+              <div class="af-row">
+                <span class="af-k">Claiming at</span>
+                <span class="af-v">BAO Counter</span>
+              </div>
+            </div>
+            <div class="sum-rows">
+              <div class="sr"><span>Items in order</span><span id="sumItems">0</span></div>
+              <div class="sr"><span>Claiming method</span><span>On-site pickup</span></div>
+              <div class="sr total"><span>TOTAL ITEMS</span><span id="sumTotal">0</span></div>
+            </div>
+            <div class="pickup-notice">
+              ⚡ PRESENT YOUR CLAIM FORM<br/>AT THE BAO COUNTER UPON CLAIMING.
+            </div>
+            <button class="place-btn" id="placeBtn" onclick="placeOrder()"
+                    disabled aria-disabled="true">
+              <span class="pb-shimmer" aria-hidden="true"></span>
+              ▶ PLACE ORDER & GENERATE FORM
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-panel" id="panel-confirmation">
+    <div class="inner">
+      <nav class="breadcrumb no-print" aria-label="Breadcrumb">
+        <a href="#" class="bc-link" onclick="showPanel('catalog');return false;">CATALOG</a>
+        <span class="bc-sep">›</span>
+        <a href="#" class="bc-link" onclick="showPanel('cart');return false;">CART</a>
+        <span class="bc-sep">›</span><span class="bc-cur">CONFIRMATION</span>
+      </nav>
+
+      <div class="steps no-print" role="list">
+        <div class="step done" role="listitem"><div class="step-num">✓</div><span class="step-label">CATALOG</span></div>
+        <div class="step-line done"></div>
+        <div class="step done" role="listitem"><div class="step-num">✓</div><span class="step-label">REVIEW CART</span></div>
+        <div class="step-line done"></div>
+        <div class="step current" role="listitem"><div class="step-num">3</div><span class="step-label">CONFIRMATION</span></div>
+      </div>
+
+      <div class="success-banner no-print" role="alert" aria-live="polite">
+        <div class="success-icon" aria-hidden="true">✓</div>
+        <div>
+          <p class="success-title">ORDER PLACED SUCCESSFULLY!</p>
+          <p class="success-sub">
+            Your claim form has been generated and saved. Print or save it and present at the BAO counter.
+          </p>
+        </div>
+      </div>
+
+      <div class="conf-grid">
+        <div class="form-card" aria-label="BAO claim form">
+          <div class="form-card-header no-print">
+            <h1 class="fch-title">BAO CLAIM FORM</h1>
+            <span class="fch-id" id="orderIdDisplay">ORDER #—</span>
+          </div>
+          <div class="printable">
+            <div class="print-header">
+              <div class="print-logo-wrap">
+                <div class="print-logo-box" aria-hidden="true">GO</div>
+                <div class="print-org">
+                  LSPU NAVGO
+                  <span>Laguna State Polytechnic University</span>
+                  <span>Business Affairs Office — Claim Form</span>
+                </div>
+              </div>
+              <div class="print-doc-type">
+                <p class="print-doc-label">ORDER ID</p>
+                <p class="print-doc-id" id="formOrderId">ORDER #—</p>
+              </div>
+            </div>
+
+            <div class="info-grid">
+              <div class="info-field">
+                <p class="if-label">STUDENT ID NUMBER</p>
+                <p class="if-val" id="slipStudentId">{{ student.user_id|default:"—" }}</p>
+              </div>
+              <div class="info-field">
+                <p class="if-label">STUDENT NAME</p>
+                <p class="if-val">{{ student.username|default:"—" }}</p>
+              </div>
+              <div class="info-field">
+                <p class="if-label">DATE ORDERED</p>
+                <p class="if-val" id="orderDate">—</p>
+              </div>
+              <div class="info-field">
+                <p class="if-label">CLAIMING OFFICE</p>
+                <p class="if-val">BAO Counter</p>
+              </div>
+            </div>
+
+            <div class="items-table-wrap">
+              <p class="it-title">ITEMS TO CLAIM</p>
+              <table class="items-table" aria-label="Items in this order">
+                <thead>
+                  <tr>
+                    <th>#</th><th>ITEM NAME</th><th>CATEGORY</th><th>QTY</th>
+                  </tr>
+                </thead>
+                <tbody id="formItemsTbody"></tbody>
+              </table>
+            </div>
+
+            <div class="staff-section" aria-label="Staff use only">
+              <p class="ss-label">FOR BAO STAFF USE ONLY</p>
+              <div class="ss-fields">
+                <div class="ss-field">
+                  <span class="ss-field-label">Processed by:</span>
+                  <div class="ss-line"></div>
+                </div>
+                <div class="ss-field">
+                  <span class="ss-field-label">Date / Time claimed:</span>
+                  <div class="ss-line"></div>
+                </div>
+                <div class="ss-field">
+                  <span class="ss-field-label">Signature:</span>
+                  <div class="ss-line"></div>
+                </div>
+                <div class="ss-field">
+                  <span class="ss-field-label">Remarks:</span>
+                  <div class="ss-line"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="print-footer">
+              <div>
+                <p class="pf-text">LSPU NAVGO — VIRTUAL STUDENT HUB</p>
+                <p class="pf-text">GENERATED: <span id="genTimestamp">—</span></p>
+              </div>
+              <div class="qr-placeholder" aria-label="QR code placeholder">📱</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-panel no-print" aria-label="Order actions">
+          <h2 class="ap-title">NEXT STEPS</h2>
+          <div class="action-btns">
+            <button class="btn btn-lime" onclick="window.print()">
+              <span class="sh"></span>🖨 PRINT FORM
+            </button>
+            <button class="btn btn-primary" onclick="window.print()">
+              <span class="sh"></span>📄 EXPORT PDF
+            </button>
+            <button class="btn btn-ghost"
+                    onclick="window.location.href='{% url 'dashboard' %}#records'">
+              📋 VIEW IN RECORDS
+            </button>
+          </div>
+          <div class="ap-divider"></div>
+          <div class="instructions" role="list">
+            <div class="ins-item" role="listitem">
+              <div class="ins-num">1</div>
+              <p class="ins-text">Print this form or save it to your device.</p>
+            </div>
+            <div class="ins-item" role="listitem">
+              <div class="ins-num">2</div>
+              <p class="ins-text">Go to the BAO counter on campus.</p>
+            </div>
+            <div class="ins-item" role="listitem">
+              <div class="ins-num">3</div>
+              <p class="ins-text">Present this form to the BAO staff for processing.</p>
+            </div>
+            <div class="ins-item" role="listitem">
+              <div class="ins-num">4</div>
+              <p class="ins-text">Claim your items and keep the stamped copy.</p>
+            </div>
+          </div>
+          <div class="ap-divider"></div>
+          <div class="next-links">
+            <a href="#" class="next-link" onclick="showPanel('catalog');return false;">
+              <span class="nl-icon">🛒</span>
+              <span class="nl-text">BROWSE MORE ITEMS</span>
+            </a>
+            <a href="{% url 'dashboard' %}" class="next-link">
+              <span class="nl-icon">⬛</span>
+              <span class="nl-text">BACK TO DASHBOARD</span>
+            </a>
+            <a href="{% url 'clinic' %}" class="next-link">
+              <span class="nl-icon">🏥</span>
+              <span class="nl-text">BOOK CLINIC APPOINTMENT</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+
+<div class="drawer-overlay" id="drawerOverlay" onclick="toggleCart()" aria-hidden="true"></div>
+<aside class="cart-drawer" id="cartDrawer" role="complementary" aria-label="Shopping cart">
+  <div class="cart-header">
+    <h2 class="cart-title">YOUR CART</h2>
+    <button class="cart-close" onclick="toggleCart()" aria-label="Close cart">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems" aria-live="polite">
+    <div class="cart-empty-drawer" id="cartEmptyDrawer">
+      <div class="cart-empty-icon" aria-hidden="true">🛒</div>
+      <p class="cart-empty-text">YOUR CART IS EMPTY.<br/>ADD ITEMS ABOVE.</p>
+    </div>
+  </div>
+  <div class="cart-footer">
+    <div class="cart-summary" id="cartSummary" style="display:none;">
+      <div class="cs-row"><span>ITEMS</span><span id="itemCount">0</span></div>
+      <div class="cs-row total"><span>TOTAL ITEMS</span><span id="totalItems">0</span></div>
+    </div>
+    <button class="checkout-btn" id="checkoutBtn" onclick="goToCart()"
+            disabled aria-disabled="true">▶ PROCEED TO CHECKOUT</button>
+  </div>
+</aside>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+{% include "includes/messages.html" %}
+
+<script src="{% static 'js/navgo.js' %}"></script>
+<script src="{% static 'js/bao.js' %}"></script>
+
+</body>
+</html>

@@ -1,0 +1,371 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>LSPU NavGO | Home</title>
+        <link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+        <link rel="stylesheet" href="{% static 'css/choose_path.css' %}"> 
+        <link rel="stylesheet" href="{% static 'css/home.css' %}"> 
+        <link rel="stylesheet" href="{% static 'css/navgo.css' %}"> 
+        <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+    </head>
+    <body>
+
+        <div class="orb o1" aria-hidden="true"></div>
+        <div class="orb o2" aria-hidden="true"></div>
+        <div class="orb o3" aria-hidden="true"></div>
+
+        <nav role="navigation" aria-label="Main navigation">
+        <a href="{% url 'home' %}" class="nav-logo" aria-label="LSPU NavGO home"> 
+            <div class="logo-icon" aria-hidden="true">
+                <img src="{% static 'img/small-logo.png' %}" width="38px" height="auto" alt="logo"> 
+            </div>
+            <div class="logo-stack">
+            <span class="logo-name">LSPU NAVGO</span>
+            <span class="logo-tagline">Pocket Student Hub</span>
+            </div>
+        </a>
+
+        <div class="nav-right">
+            <a href="#how" class="nav-link" aria-label="How it works">HOW IT WORKS</a>  <!-- DJANGO STATIC??? or nah -->
+            <a href="#features" class="nav-link" aria-label="Features">FEATURES</a>  <!-- DJANGO STATIC??? or nah -->
+            <a href="#services" class="nav-link" aria-label="services">SERVICES</a>  <!-- DJANGO STATIC??? or nah -->
+            <a href="{% url 'about' %}" class="nav-link" aria-label="About us">ABOUT</a>  
+            <button class="nav-btn-theme" id="themeToggle" aria-label="Toggle light/dark theme">◑</button>
+            <a href="{% url 'login' %}" class="nav-btn-login" aria-label="Log in to LSPU NavGO">▶ LOG IN</a> 
+            <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+            <span></span><span></span><span></span>
+            </button>
+        </div>
+        </nav>
+
+        <div class="mobile-menu" id="mobileMenu" aria-label="Mobile navigation">
+            <a href="#how" class="nav-link" onclick="closeMenu()">HOW IT WORKS</a> <!-- DJANGO STATIC??? or nah -->
+            <a href="#features" class="nav-link" onclick="closeMenu()">FEATURES</a> <!-- DJANGO STATIC??? or nah -->
+            <a href="#services" class="nav-link" onclick="closeMenu()">services</a> <!-- DJANGO STATIC??? or nah -->
+            <a href="about.html" class="nav-link">ABOUT</a> 
+            <a href="login.html" class="nav-btn-login" style="text-align:center;">▶ LOG IN</a>
+        </div>
+
+        <section class="hero" aria-label="Hero section">
+        <div class="hero-bg-text" aria-hidden="true">WELCOME</br>STUDENT!</div>
+
+        <div class="sprite-wrap" aria-hidden="true">
+            <img src="{% static 'img/hero-logo.png' %}" width="32%" height="auto" alt="Hero logo"> </div>
+
+        <div class="hero-badge" aria-label="Status: Now in beta">
+            <div class="badge-dot" aria-hidden="true"></div>
+            SERVER ONLINE — LAGUNA STATE POLYTECHNIC UNIVERSITY EXCLUSIVE
+        </div>
+
+        <h1 class="hero-title">
+            DEVELOPED<br/>
+            <span class="accent" style="word-spacing: -17px;">FOR STUDENTS</span><br/>
+            <span class="accent2" style="word-spacing: -17px;">BY STUDENTS</span>
+        </h1>
+
+        <p class="hero-sub">
+            NavGO is the very first-leading unified LSPU hub. Taking one step </br>at a time, inorder to uphold what every students need.</br> <i>Because we know. Because we care. </i>
+        </p>
+
+        <div class="hero-cta">
+            <a href="{% url 'login' %}" class="btn-cta primary" aria-label="Get started — log in or sign up"> <span class="shimmer" aria-hidden="true"></span>
+            ▶ GET STARTED
+            </a>
+            <a href="#how" class="btn-cta ghost" aria-label="Learn how it works"> <span class="shimmer" aria-hidden="true"></span> <!-- DJANGO STATIC??? or nah -->
+            HOW IT WORKS ↓
+            </a>
+        </div>
+
+        <div class="scroll-hint" aria-hidden="true">
+            <span>SCROLL</span>
+            <div class="scroll-chevron"></div>
+        </div>
+        </section>
+
+        <div class="stats-bar" role="complementary" aria-label="Platform statistics">
+        <div class="stat-item fade-in">
+            <span class="stat-num">{{student_count}}</span>
+            <span class="stat-label">STUDENTS HAVE JOINED</span>
+        </div>
+        <div class="stat-item fade-in">
+            <span class="stat-num">3</span>
+            <span class="stat-label">CORE SERVICES</span>
+        </div>
+        <div class="stat-item fade-in">
+            <span class="stat-num">0</span>
+            <span class="stat-label">QUEUES TO STAND IN</span>
+        </div>
+        <div class="stat-item fade-in">
+            <span class="stat-num">24/7</span>
+            <span class="stat-label">ALWAYS ACCESSIBLE</span>
+        </div>
+        </div>
+
+        <section id="how" aria-labelledby="how-title">
+        <div class="section-inner">
+            <p class="section-tag fade-in">HOW IT WORKS</p>
+            <h2 class="section-title fade-in" id="how-title" style="margin-bottom: 15px;">
+                TWO (2) WAYS TO<br/><span class="acc">NAVIGATE SERVICES</span>
+            </h2>
+            <p class="section-desc fade-in" style="margin-bottom: 20px">
+            After logging in, you choose how you want to experience LSPU NavGO. Shortening the time span, while upbringing the best experience. </br><span style="font-size: 14px"><i>The demonstration on PATH 01 contains the alpha version of it.</i></span>
+            </p>
+
+            
+            <div class="path-grid">
+                <div class="pathA-card fade-in" role="article" aria-label="Path 1: Explore the Map">
+                    <span class="path-icon" aria-hidden="true">🗺️</span>
+                    <p class="path-num">PATH 01 (ALPHA)</p>
+                    <h3 class="path-title">EXPLORE THE<br/>PIXEL MAP</h3>
+                    <p class="path-desc">
+                        With <em>Princess</em> as your avatar walk through a recreation of the Laguna State Polytechnic University - Santa Cruz Campus. Navigate as if you were really there. Designed specially for freshmen or anyone wanting a virtual tour.
+                    </p>
+                    <span class="indev-badge" style="font-size: 6px; padding: 5px 12px; letter-spacing: 0.08em; margin-top: 20px;"><span class="indev-dot"></span> IN DEVELOPMENT - (GAMIFIED EXPERIENCE) </span>
+                </div>
+
+                <div class="pathB-card alt fade-in" role="article" aria-label="Path 2: Quick Access Web View">
+                    <span class="path-icon" aria-hidden="true">⚡</span>
+                    <p class="path-num">PATH 02</p>
+                    <h3 class="path-title">QUICK ACCESS<br/>WEB VIEW</h3>
+                    <p class="path-desc">
+                        Skip the map entirely. Access BAO ordering, clinic booking, Student Center, your profile, and your history through a clean, direct interface, specifically designed for students who just need to get things done fast.
+                    </p>
+                    <span class="path-tag">🖥️ DIRECT ACCESS</span>
+                </div>
+            </div>
+        </div>
+        </section>
+
+        <section id="features" class="features-bg" aria-labelledby="feat-title">
+            <div class="section-inner">
+                <p class="section-tag fade-in">FEATURES</p>
+                <h2 class="section-title fade-in" id="feat-title">
+                (ALMOST) EVERYTHING YOU'LL<br/><span class="acc">NEED INSIDE THE UNIVERSITY</span>
+                </h2>
+                <p class="section-desc fade-in" style="margin-bottom: 15px; padding-left: 20px; text-indent: 30px; max-width: 1000px; font-size: 16px;">
+                NavGO offers tons of services and features that streamline your daily university life. From tracking uniform orders to booking clinic appointments, everything you need is centralized in one fast, hassle-free hub ngl fr.
+                </p>
+
+                <div class="feat-grid">
+                <div class="feat-card fade-in" role="article">
+                    <div class="feat-icon-wrap"><span class="feat-icon" aria-hidden="true">🧍</span></div>
+                    <h3 class="feat-title">PLAYER PROFILE</h3>
+                    <p class="feat-desc">Your student ID, year, section, and order history are all auto-populated into forms so you never have to retype them.</p>
+                </div>
+                <div class="feat-card fade-in" role="article">
+                    <div class="feat-icon-wrap"><span class="feat-icon" aria-hidden="true">🛒</span></div>
+                    <h3 class="feat-title">BAO ORDERING</h3>
+                    <p class="feat-desc">Browse current inventory, check shirt sizes, add to cart, and generate a printable claim form without having to visit the office onsite.</p>
+                </div>
+                <div class="feat-card fade-in" role="article">
+                    <div class="feat-icon-wrap"><span class="feat-icon" aria-hidden="true">🏥</span></div>
+                    <h3 class="feat-title">CLINIC BOOKING</h3>
+                    <p class="feat-desc">Book a physical check-up or request medical records using our calendar UI. Receive a printable appointment slip instantly.</p>
+                </div>
+                <div class="feat-card fade-in" role="article">
+                    <div class="feat-icon-wrap"><span class="feat-icon" aria-hidden="true">📋</span></div>
+                    <h3 class="feat-title">MY RECORDS</h3>
+                    <p class="feat-desc">View all past and pending orders and appointments in one place. Reprint forms any time if you lose the original.</p>
+                </div>
+                <div class="feat-card fade-in" role="article">
+                    <div class="feat-icon-wrap"><span class="feat-icon" aria-hidden="true">🔔</span></div>
+                    <h3 class="feat-title">SMART ALERTS</h3>
+                    <p class="feat-desc">See at-a-glance notices like "1 Active BAO Order" or "Upcoming Appointment Tomorrow" directly on your dashboard.</p>
+                </div>
+                <div class="feat-card fade-in" role="article">
+                    <div class="feat-icon-wrap"><span class="feat-icon" aria-hidden="true">📅</span></div>
+                    <h3 class="feat-title">STAFF TOOLS</h3>
+                    <p class="feat-desc">BAO staff manage inventory and restock dates. Clinic staff see daily appointment status to help prepare for the day.</p>
+                </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="map-section" aria-labelledby="map-title">
+        <div class="section-inner">
+            <div class="map-grid">
+            <div class="map-visual fade-in" role="img" aria-label="Campus map preview placeholder">
+                <div class="path-visual map-bg" aria-hidden="true" style="position:relative;">
+                    <div class="indev-overlay" aria-hidden="true">
+                    <div class="indev-badge">
+                        <span class="indev-dot"></span>
+                        IN DEVELOPMENT
+                    </div>
+                    <p class="indev-sub">ALPHA BUILD</p>
+                    </div>
+                    <div class="pin pin1" aria-label="BAO Office location">
+                        <div class="pin-dot"></div>
+                        <span class="pin-label">BAO</span>
+                    </div>
+                    <div class="pin pin2 alt" aria-label="Clinic location">
+                        <div class="pin-dot"></div>
+                        <span class="pin-label">CLINIC</span>
+                    </div>
+                    <div class="pin pin3 alt" aria-label="Library location">
+                        <div class="pin-dot"></div>
+                        <span class="pin-label">LIBRARY</span>
+                    </div>
+                    <div class="pin pin4" aria-label="Main building location">
+                        <div class="pin-dot"></div>
+                        <span class="pin-label">MAIN BLDG</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="map-content fade-in">
+                <p class="section-tag">CURRENTLY IN THE MAKING</p>
+                <h2 class="section-title" id="map-title">A DIGITIZED TRANSLATION OF<br/><span class="acc">THE UNIVERSITY</span></h2>
+                <p class="section-desc">
+                    Walk <em>Princess</em> as your pixel avatar through an accurate recreation of the campus. There are only few selected locations for now, we'll continue to expand soon!
+                </p>
+                <ul class="map-bullets" aria-label="Map feature highlights">
+                <li><span class="bullet-mark" aria-hidden="true"></span>Discover where BAO and Clinic are before physically going</li>
+                <li><span class="bullet-mark" aria-hidden="true"></span>Enter specific buildings to access services right from the map</li>
+                <li><span class="bullet-mark" aria-hidden="true"></span>Virtual orientation for incoming freshmen</li>
+                <li><span class="bullet-mark" aria-hidden="true"></span>Skip the map any time via Quick Access</li>
+                </ul>
+            </div>
+            </div>
+        </div>
+        </section>
+
+        <section id="services" class="services-bg" aria-labelledby="services-title">
+        <div class="section-inner">
+            <p class="section-tag fade-in">services</p>
+            <h2 class="section-title fade-in" id="services-title" style="word-spacing: -10px;">
+            THREE SERVICES.<br/>
+            TWO OFFICES.<br/><span class="acc">ONE HUB.</span>
+            </h2>
+            <p class="section-desc fade-in" style="margin-bottom: 15px; padding-left: 20px; text-indent: 30px; max-width: 1000px; font-size: 18px;">
+            LSPU NavGO currently serves two core campus offices, with more on the way. By allowing students to handle preliminary tasks online, we aim to eliminate the uncertainty and long lines that often might cause frustration. Through these services, we do not wish to eliminate on-site physical interactions, but rather to bridge the gap between digital convenience and on-campus necessities.
+            </p>
+
+            <div class="services-grid">
+                <div class="module-card fade-in" role="article" aria-label="BAO Module">
+                    <span class="mod-chip">SERVICE 01</span>
+                    <h3 class="mod-title">BAO — BUSINESS AFFAIRS OFFICE</h3>
+                    <p class="mod-desc">
+                    Order uniforms, check stock availability, and pick up your items without ever having to line up just to ask if your size is in stock.
+                    </p>
+                    <ul class="mod-list" aria-label="BAO features">
+                        <li>Real-time inventory with restock dates</li>
+                        <li>Cart and checkout flow</li>
+                        <li>Printable claim form on confirmation</li>
+                        <li>Order history and reprint anytime</li>
+                    </ul>
+                </div>
+
+                <div class="module-card fade-in" role="article" aria-label="Clinic Service">
+                    <span class="mod-chip">SERVICE 02</span>
+                    <h3 class="mod-title">CLINIC — HEALTH SERVICES</h3>
+                    <p class="mod-desc">
+                    Schedule physical check-ups or request medical records using a calendar and walk in with your appointment slip already printed.
+                    </p>
+                    <ul class="mod-list" aria-label="Clinic features">
+                        <li>Calendar-based appointment scheduling</li>
+                        <li>Check-up or medical records selection</li>
+                        <li>Printable appointment slip generation</li>
+                        <li>Staff forecast dashboard for volume prep</li>
+                    </ul>
+                </div>
+
+                <div class="module-card fade-in" role="article" aria-label="Student Center">
+                    <span class="mod-chip">SERVICE 03</span>
+                    <h3 class="mod-title">STUDENT CENTER</h3>
+                    <p class="mod-desc">
+                        Schedule physical check-ups or request medical records using a calendar — and walk in with your appointment slip already printed.
+                    </p>
+                    <ul class="mod-list" aria-label="Clinic features">
+                        <li>Calendar-based appointment scheduling</li>
+                        <li>Check-up or medical records selection</li>
+                        <li>Printable appointment slip generation</li>
+                        <li>Staff forecast dashboard for volume prep</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        </section>
+
+        <section class="quote-section" aria-label="Featured quote">
+        <div class="section-inner">
+            <div class="quote-wrap fade-in">
+            <span class="quote-mark" aria-hidden="true">"</span>
+            <p class="quote-text">
+                "A freshman who doesn't know where is where shouldn't do guesswork.  <br/>A senior who is used to the system should be suspended from spending extra waiting time.  LSPU NavGO serves as an aiding platform by giving every students the experience they actually need."
+            </p>
+            <p class="quote-source">— GROUP 6 · LSPU-SCC</p>
+            </div>
+        </div>
+        </section>
+
+        <section class="cta-banner" aria-label="Call to action">
+        <div class="section-inner">
+            <p class="section-tag fade-in" style="color:var(--c-p4);">READY TO NAV?</p>
+            <h2 class="section-title fade-in" style="max-width:100%; text-align:center; word-spacing: -10px;">
+            JOIN US AND START<br/>YOUR CAMPUS JOURNEY
+            </h2>
+            <p class="section-desc fade-in" style="text-align:center;margin-left:auto;margin-right:auto;">
+                Create your account in seconds. Your time is what we value.
+            </p>
+            <div class="hero-cta fade-in">
+            <a href="{% url 'login' %}" class="btn-cta primary" aria-label="Get started now"> <span class="shimmer" aria-hidden="true"></span>
+                ▶ GET STARTED
+            </a>
+            <a href="{% url 'about' %}" class="btn-cta ghost" aria-label="Meet the team"> <span class="shimmer" aria-hidden="true"></span>
+                MEET THE TEAM →
+            </a>
+            </div>
+        </div>
+        </section>
+
+        <footer role="contentinfo">
+        <div class="footer-inner">
+            <div class="footer-brand">
+            <a href="{% url 'home' %}" class="nav-logo" aria-label="LSPU NavGO home" style="margin-bottom:10px;display:inline-flex;"> <div class="logo-icon" aria-hidden="true">
+                    <img src="{% static 'img/small-logo.png' %}" width="38px" height="auto" alt="logo"> </div>
+                <div class="logo-stack">
+                <span class="logo-name" style="font-size:12px; margin-top: 7px; word-spacing: -5px;">LSPU NAVGO</span>
+                </div>
+            </a>
+            <p> Final project in Software Design.<br/>Created solely for school purposes only.<br/>Presented to Ms. Princess Plebiscite Tope</p>
+            </div>
+
+            <div class="footer-links" role="navigation" aria-label="Footer links">
+                <div class="footer-col">
+                    <h4>PAGES</h4>
+                    <a href="{% url 'home' %}">Home</a> 
+                    <a href="{% url 'login' %}">Login</a> 
+                    <a href="{% url 'about' %}">About Us</a> 
+                </div>
+                <div class="footer-col">
+                    <h4>SERVICES</h4>
+                    <a href="{% url 'login' %}">BAO</a> <!-- directs to login for now (planning to add if user logged in then go to BAO)-->
+                    <a href="{% url 'login' %}">Clinic</a> <!-- directs to login for now (planning to add if user logged in then go to CLINIC)-->
+                    <a href="{% url 'login' %}">Explore Campus</a> <!-- contemplating to remove this -->
+                </div>
+                <div class="footer-col">
+                    <h4>ACCOUNT</h4>
+                    <a href="{% url 'login' %}">Sign Up</a> 
+                    <a href="{% url 'login' %}">Log In</a> 
+                    <a href="{% url 'login' %}">My Profile</a>  <!-- directs to login for now (planning to add if user logged in then go to PROFILE)-->
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p class="footer-copy">© 2026 LSPU NAVGO · LAGUNA STATE POLYTECHNIC UNIVERSITY · SOFTWARE DESIGN · ALL RIGHTS RESERVED</p>
+            <div class="footer-pixel-row" aria-hidden="true">
+            <div class="fp"></div>
+            <div class="fp"></div>
+            <div class="fp"></div>
+            <div class="fp"></div>
+            <div class="fp"></div>
+            </div>
+        </div>
+        </footer>
+
+    <script src="{% static 'js/home.js' %}"> </script> </body>
+</html>

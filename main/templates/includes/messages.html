@@ -1,0 +1,148 @@
+{% if messages %}
+
+<style>
+.toast-stack{
+  position:fixed;
+  bottom:28px;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  z-index:9999;
+  pointer-events:none;
+}
+.navgo-toast{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  padding:11px 20px;
+  border-radius:4px;
+  font-family:'Press Start 2P', monospace;
+  font-size:7px;
+  letter-spacing:.06em;
+  line-height:1.6;
+  white-space:nowrap;
+  pointer-events:auto;
+  border:1px solid;
+  /* enter from below */
+  animation: toast-in .28s cubic-bezier(.2,.8,.4,1) forwards;
+  cursor:pointer;
+  max-width:90vw;
+  white-space:normal;
+  word-break:break-word;
+}
+.navgo-toast.hiding{
+  animation: toast-out .22s ease forwards;
+}
+/* success */
+.navgo-toast.success{
+  background:rgba(8,6,13,.92);
+  border-color:rgba(218,255,35,.35);
+  color:#DAFF23;
+}
+.navgo-toast.success .t-icon::before{ content:'✓'; }
+/* error */
+.navgo-toast.error{
+  background:rgba(8,6,13,.92);
+  border-color:rgba(220,80,80,.4);
+  color:#f08080;
+}
+.navgo-toast.error .t-icon::before{ content:'✕'; }
+/* warning */
+.navgo-toast.warning{
+  background:rgba(8,6,13,.92);
+  border-color:rgba(230,184,0,.4);
+  color:#e6b800;
+}
+.navgo-toast.warning .t-icon::before{ content:'⚠'; }
+/* info */
+.navgo-toast.info{
+  background:rgba(8,6,13,.92);
+  border-color:rgba(153,86,165,.45);
+  color:#E6C5E2;
+}
+.navgo-toast.info .t-icon::before{ content:'ℹ'; }
+
+[data-theme="light"] .navgo-toast{
+  background:rgba(255,255,255,.96);
+  box-shadow:0 4px 24px rgba(52,25,80,.15);
+}
+
+/* progress bar */
+.t-bar{
+  position:absolute;
+  bottom:0; left:0;
+  height:2px;
+  border-radius:0 0 4px 4px;
+  animation: t-shrink 4s linear forwards;
+  transform-origin:left;
+}
+.navgo-toast{ position:relative; overflow:hidden; }
+.success .t-bar { background:rgba(218,255,35,.5); }
+.error   .t-bar { background:rgba(220,80,80,.5); }
+.warning .t-bar { background:rgba(230,184,0,.5); }
+.info    .t-bar { background:rgba(153,86,165,.5); }
+
+@keyframes toast-in{
+  from{ opacity:0; transform:translateY(14px) scale(.97); }
+  to  { opacity:1; transform:translateY(0)    scale(1);   }
+}
+@keyframes toast-out{
+  from{ opacity:1; transform:translateY(0); }
+  to  { opacity:0; transform:translateY(8px); }
+}
+@keyframes t-shrink{
+  from{ transform:scaleX(1); }
+  to  { transform:scaleX(0); }
+}
+</style>
+
+<div class="toast-stack" id="toastStack" role="status" aria-live="polite" aria-atomic="false">
+  {% for message in messages %}
+    {% if message.tags == 'error' %}
+      {% with tag='error' %}
+        <div class="navgo-toast error" role="alert" onclick="this.classList.add('hiding'); setTimeout(()=>this.remove(),220);">
+          <span class="t-icon" aria-hidden="true"></span>
+          <span>{{ message }}</span>
+          <div class="t-bar"></div>
+        </div>
+      {% endwith %}
+    {% elif message.tags == 'success' %}
+      <div class="navgo-toast success" role="status" onclick="this.classList.add('hiding'); setTimeout(()=>this.remove(),220);">
+        <span class="t-icon" aria-hidden="true"></span>
+        <span>{{ message }}</span>
+        <div class="t-bar"></div>
+      </div>
+    {% elif message.tags == 'warning' %}
+      <div class="navgo-toast warning" role="alert" onclick="this.classList.add('hiding'); setTimeout(()=>this.remove(),220);">
+        <span class="t-icon" aria-hidden="true"></span>
+        <span>{{ message }}</span>
+        <div class="t-bar"></div>
+      </div>
+    {% else %}
+      <div class="navgo-toast info" role="status" onclick="this.classList.add('hiding'); setTimeout(()=>this.remove(),220);">
+        <span class="t-icon" aria-hidden="true"></span>
+        <span>{{ message }}</span>
+        <div class="t-bar"></div>
+      </div>
+    {% endif %}
+  {% endfor %}
+</div>
+
+<script>
+
+(function(){ /* auto-dismiss toasts after 4 s */
+  document.querySelectorAll('.navgo-toast').forEach(function(toast, i){
+    setTimeout(function(){
+      if(toast.isConnected){
+        toast.classList.add('hiding');
+        setTimeout(function(){ toast.remove(); }, 220);
+      }
+    }, 4000 + i * 300); /* stagger multi toasts */
+  });
+})();
+</script>
+
+{% endif %}

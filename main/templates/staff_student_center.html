@@ -1,0 +1,483 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>LSPU NavGO | Student Center Management</title>
+<link rel="icon" type="image/x-icon" href="{% static 'img/favicon.ico' %}">
+<link rel="stylesheet" href="{% static 'css/navgo.css' %}"/>
+<link rel="stylesheet" href="{% static 'css/staff_student_center.css' %}"/>
+
+</head>
+<body>
+
+<nav class="topnav" role="navigation" aria-label="Main navigation">
+  <a href="{% url 'dashboard' %}" class="nav-logo" aria-label="LSPU NAVGO home">
+    <div class="logo-hex" aria-hidden="true">
+      <img src="{% static 'img/small-logo.png' %}" width="34px" height="auto" alt="logo"> 
+    </div>
+    <div><div class="logo-name">LSPU NAVGO</div><div class="logo-sub">Virtual Student Hub</div></div>
+  </a>
+  <div class="nav-r">
+    <div class="nav-user" style="background:rgba(218,255,35,.08);border-color:rgba(218,255,35,.2);">
+      <div class="nav-avatar" style="background:rgba(218,255,35,.2);border-color:rgba(218,255,35,.4);color:var(--c-lime);">S</div>
+      <span style="font-family:var(--font-px);font-size:5px;color:var(--c-lime);letter-spacing:.08em;">{{ staff_name|upper|default:"STAFF" }}</span>
+    </div>
+    <button class="nav-btn" id="themeToggle" aria-label="Toggle theme">◑</button>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<aside class="sidebar" id="sidebar" role="navigation" aria-label="Staff sidebar">
+  <div class="staff-sidebar-note">🛡 STAFF ACCESS</div>
+  <div class="sb-section">
+    <p class="sb-label">MANAGE</p>
+    <a href="{% url 'bao_staff' %}" class="sb-link"><span class="sb-icon">📦</span> BAO ORDERS</a>
+    <a href="{% url 'clinic_staff' %}" class="sb-link"><span class="sb-icon">📅</span> CLINIC FORECAST</a>
+    <a href="{% url 'sc_staff' %}" class="sb-link active" aria-current="page"><span class="sb-icon">🏪</span> STUDENT CENTER</a>
+  </div>
+  <div class="divider"></div>
+  <div class="sb-section">
+    <p class="sb-label">VIEW AS STUDENT</p>
+    <a href="{% url 'dashboard' %}" class="sb-link"><span class="sb-icon">⬛</span> DASHBOARD</a>
+    <a href="{% url 'student_center' %}" class="sb-link"><span class="sb-icon">🏪</span> STUDENT CENTER</a>
+  </div>
+  <div class="sb-bottom">
+    <a href="{% url 'login' %}" class="sb-link"><span class="sb-icon">⏏</span> LOG OUT</a>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="inner">
+
+    <div class="ph">
+      <p class="ph-tag">STAFF · STUDENT CENTER</p>
+      <h1 class="ph-title">SC <span class="acc">MANAGEMENT</span></h1>
+      <p class="ph-sub">Review moderator applications, manage active moderators, and oversee marketplace listings.</p>
+    </div>
+
+
+    <div class="stat-row" role="list">
+      <div class="stat-card warn" role="listitem">
+        <div class="stat-num">{{ pending_apps|length }}</div>
+        <div class="stat-label">PENDING<br/>APPLICATIONS</div>
+      </div>
+      <div class="stat-card lime" role="listitem">
+        <div class="stat-num">{{ moderators|length }}</div>
+        <div class="stat-label">ACTIVE<br/>MODERATORS</div>
+      </div>
+      <div class="stat-card gold" role="listitem">
+        <div class="stat-num">{{ recent_listings|length }}</div>
+        <div class="stat-label">RECENT<br/>LISTINGS</div>
+      </div>
+      <div class="stat-card purple" role="listitem">
+        <div class="stat-num">{{ past_apps|length }}</div>
+        <div class="stat-label">PAST<br/>REVIEWS</div>
+      </div>
+    </div>
+
+
+    <div class="staff-tabs" role="tablist">
+      <button class="stab active" id="tab-apps" role="tab" aria-selected="true"
+              onclick="switchTab('apps')">
+        📋 APPLICATIONS
+        {% if pending_apps %}
+          <span class="stab-badge warn">{{ pending_apps|length }}</span>
+        {% endif %}
+      </button>
+      <button class="stab" id="tab-mods" role="tab" aria-selected="false"
+              onclick="switchTab('mods')">
+        🛡 MODERATORS
+        {% if moderators %}
+          <span class="stab-badge">{{ moderators|length }}</span>
+        {% endif %}
+      </button>
+      <button class="stab" id="tab-listings" role="tab" aria-selected="false"
+              onclick="switchTab('listings')">
+        📦 LISTINGS
+      </button>
+      <button class="stab" id="tab-history" role="tab" aria-selected="false"
+              onclick="switchTab('history')">
+        🕓 HISTORY
+      </button>
+    </div>
+
+
+    <div class="stab-panel active" id="stab-apps">
+      {% if pending_apps %}
+        <div class="app-grid">
+          {% for app in pending_apps %}
+            <div class="app-card pending" id="app-card-{{ app.pk }}">
+              <div class="app-header">
+                <div>
+                  <p class="app-student">{{ app.student_name }}</p>
+                  <p class="app-id">ID: {{ app.student_user_id }}</p>
+                </div>
+                <span class="status-chip s-pending">PENDING</span>
+              </div>
+              <div class="app-body">
+                {% if app.student_email %}
+                  <p class="app-email">{{ app.student_email }}</p>
+                {% endif %}
+                <div class="app-reason" aria-label="Application reason">{{ app.reason }}</div>
+                <p class="app-date">APPLIED: {{ app.applied_at|date:"M j, Y · g:i A" }}</p>
+                <div class="app-actions">
+                  <button class="app-btn approve"
+                          onclick="reviewApp({{ app.pk }}, 'approve', '{{ app.student_name }}', this)">
+                    ✓ APPROVE
+                  </button>
+                  <button class="app-btn reject"
+                          onclick="openRejectModal({{ app.pk }}, '{{ app.student_name }}')">
+                    ✕ REJECT
+                  </button>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-panel">
+          <div class="ep-icon" aria-hidden="true">📋</div>
+          <p class="ep-text">NO PENDING APPLICATIONS.<br/>STUDENTS CAN APPLY VIA THE STUDENT CENTER PAGE.</p>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="stab-panel" id="stab-mods">
+      {% if moderators %}
+        <div class="mod-table-wrap">
+          <table class="mod-table" aria-label="Active moderators">
+            <thead>
+              <tr>
+                <th>MODERATOR</th>
+                <th>STUDENT ID</th>
+                <th>EMAIL</th>
+                <th>GRANTED BY</th>
+                <th>GRANTED AT</th>
+                <th>ACTION</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for mod in moderators %}
+                <tr id="mod-row-{{ mod.pk }}">
+                  <td>
+                    <p class="mod-name">{{ mod.student_name }}</p>
+                  </td>
+                  <td><span class="mod-id">{{ mod.student_user_id }}</span></td>
+                  <td>{{ mod.student_email|default:"—" }}</td>
+                  <td>{{ mod.granted_by }}</td>
+                  <td><span class="mod-date">{{ mod.granted_at|date:"M j, Y" }}</span></td>
+                  <td>
+                    <button class="revoke-btn"
+                            onclick="revokeMod({{ mod.pk }}, '{{ mod.student_name }}', this)">
+                      ✕ REVOKE
+                    </button>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="empty-panel">
+          <div class="ep-icon" aria-hidden="true">🛡</div>
+          <p class="ep-text">NO ACTIVE MODERATORS YET.<br/>APPROVE AN APPLICATION ABOVE TO ADD ONE.</p>
+        </div>
+      {% endif %}
+    </div>
+
+
+    <div class="stab-panel" id="stab-listings">
+      {% if recent_listings %}
+        <div class="list-table-wrap">
+          <div class="list-header">
+            <h2 class="list-title">RECENT LISTINGS (LAST 50)</h2>
+            <span style="font-family:var(--font-px);font-size:5px;color:var(--c-muted);">
+              STAFF CAN REMOVE ANY LISTING THAT VIOLATES GUIDELINES
+            </span>
+          </div>
+          <table class="list-table" aria-label="Recent listings">
+            <thead>
+              <tr>
+                <th></th>
+                <th>TITLE</th>
+                <th>CATEGORY</th>
+                <th>POSTED BY</th>
+                <th>DATE</th>
+                <th>STATUS</th>
+                <th>ACTION</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for listing in recent_listings %}
+                <tr id="list-row-{{ listing.pk }}">
+                  <td>
+                    <div class="lt-thumb">
+                      {% if listing.image_base64 %}
+                        <img src="{{ listing.image_base64 }}" alt="{{ listing.title }}"/>
+                      {% else %}
+                        {% if listing.category == 'books' %}📚
+                        {% elif listing.category == 'uniform' %}👔
+                        {% elif listing.category == 'electronics' %}💻
+                        {% elif listing.category == 'merch' %}🎽
+                        {% elif listing.category == 'food' %}🍱
+                        {% else %}📦{% endif %}
+                      {% endif %}
+                    </div>
+                  </td>
+                  <td>
+                    <p class="lt-title">{{ listing.title }}</p>
+                    {% if listing.is_event %}
+                      <span class="status-chip sc-event" style="margin-top:3px;display:inline-flex;">⚡ EVENT</span>
+                    {% endif %}
+                  </td>
+                  <td><span class="lt-cat">{{ listing.get_category_display|upper }}</span></td>
+                  <td>
+                    <p style="font-family:var(--font-px);font-size:6px;color:var(--c-text);">{{ listing.poster_name }}</p>
+                    <p class="lt-poster">{{ listing.poster_user_id }}</p>
+                  </td>
+                  <td style="font-family:var(--font-px);font-size:5px;color:var(--c-dim);">
+                    {{ listing.created_at|date:"M j, Y" }}
+                  </td>
+                  <td>
+                    {% if listing.status == 'available' %}
+                      <span class="status-chip sc-available">AVAILABLE</span>
+                    {% elif listing.status == 'reserved' %}
+                      <span class="status-chip sc-reserved">RESERVED</span>
+                    {% elif listing.status == 'sold' %}
+                      <span class="status-chip sc-sold">SOLD</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <button class="remove-btn"
+                            onclick="removeListing({{ listing.pk }}, '{{ listing.title|escapejs }}', this)">
+                      ✕ REMOVE
+                    </button>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="empty-panel">
+          <div class="ep-icon" aria-hidden="true">📦</div>
+          <p class="ep-text">NO LISTINGS YET.</p>
+        </div>
+      {% endif %}
+    </div>
+
+
+    <div class="stab-panel" id="stab-history">
+      {% if past_apps %}
+        <div class="past-apps-list">
+          {% for app in past_apps %}
+            <div class="past-app-row">
+              <div class="pa-info">
+                <p class="pa-name">{{ app.student_name }}
+                  <span style="font-family:var(--font-px);font-size:5px;color:var(--c-muted);margin-left:8px;">
+                    {{ app.student_user_id }}
+                  </span>
+                </p>
+                <p class="pa-meta">
+                  Reviewed by {{ app.reviewed_by|default:"—" }}
+                  {% if app.rejection_reason %} · Note: {{ app.rejection_reason }}{% endif %}
+                </p>
+              </div>
+              <div>
+                {% if app.status == 'approved' %}
+                  <span class="status-chip s-approved">APPROVED</span>
+                {% else %}
+                  <span class="status-chip s-rejected">REJECTED</span>
+                {% endif %}
+              </div>
+              <div class="pa-date">{{ app.reviewed_at|date:"M j, Y"|default:"—" }}</div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-panel">
+          <div class="ep-icon" aria-hidden="true">🕓</div>
+          <p class="ep-text">NO REVIEWED APPLICATIONS YET.</p>
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+</main>
+
+<div class="modal-overlay" id="rejectModal" role="dialog" aria-modal="true">
+  <div class="reason-modal">
+    <h2 class="rm-title">REJECT APPLICATION</h2>
+    <input type="hidden" id="rejectAppId" value=""/>
+    <input type="hidden" id="rejectAppName" value=""/>
+    <div class="field" style="margin-bottom:0;">
+      <label for="rejectNote" style="font-family:var(--font-px);font-size:6px;color:var(--c-muted);letter-spacing:.1em;">
+        REJECTION REASON <span style="color:var(--c-dim);font-size:.85em;">(OPTIONAL)</span>
+      </label>
+      <textarea class="rm-textarea" id="rejectNote"
+                placeholder="Let the student know why their application was not approved..."></textarea>
+    </div>
+    <div class="rm-actions">
+      <button class="rm-btn-reject" onclick="confirmReject()">✕ CONFIRM REJECT</button>
+      <button class="rm-btn-cancel" onclick="closeRejectModal()">CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+{% include "includes/messages.html" %}
+
+<script src="{% static 'js/navgo.js' %}"></script>
+<script>
+function switchTab(tab) {
+    document.querySelectorAll('.stab').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+    });
+    document.querySelectorAll('.stab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    document.getElementById('tab-' + tab).setAttribute('aria-selected', 'true');
+    document.getElementById('stab-' + tab).classList.add('active');
+}
+
+function getCookie(name) {
+    let v = null;
+    if (document.cookie) document.cookie.split(';').forEach(c => {
+        c = c.trim();
+        if (c.startsWith(name + '=')) v = decodeURIComponent(c.slice(name.length + 1));
+    });
+    return v;
+}
+
+function reviewApp(appId, action, studentName, btn) {
+    if (action === 'approve') {
+        btn.disabled = true;
+        btn.textContent = '⏳...';
+        fetch('{% url "sc_review_application" %}', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+            body: JSON.stringify({ app_id: appId, action: 'approve' }),
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.ok) {
+                showToast(studentName + ' approved as moderator!');
+                const card = document.getElementById('app-card-' + appId);
+                if (card) {
+                    card.style.opacity = '.4';
+                    card.style.pointerEvents = 'none';
+                    card.querySelector('.status-chip').className = 'status-chip s-approved';
+                    card.querySelector('.status-chip').textContent = 'APPROVED';
+                }
+                setTimeout(() => window.location.reload(), 1000);
+            } else {
+                showToast('Error: ' + (data.error || 'Failed'));
+                btn.disabled = false;
+                btn.textContent = '✓ APPROVE';
+            }
+        })
+        .catch(() => { showToast('Connection error.'); btn.disabled = false; btn.textContent = '✓ APPROVE'; });
+    }
+}
+
+
+function openRejectModal(appId, studentName) {
+    document.getElementById('rejectAppId').value   = appId;
+    document.getElementById('rejectAppName').value = studentName;
+    document.getElementById('rejectNote').value    = '';
+    document.getElementById('rejectModal').classList.add('open');
+}
+function closeRejectModal() {
+    document.getElementById('rejectModal').classList.remove('open');
+}
+function confirmReject() {
+    const appId = document.getElementById('rejectAppId').value;
+    const name  = document.getElementById('rejectAppName').value;
+    const note  = document.getElementById('rejectNote').value.trim();
+    const btn   = document.querySelector('.rm-btn-reject');
+    btn.disabled = true; btn.textContent = '⏳...';
+
+    fetch('{% url "sc_review_application" %}', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+        body: JSON.stringify({ app_id: appId, action: 'reject', note }),
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.ok) {
+            closeRejectModal();
+            showToast(name + "'s application rejected.");
+            const card = document.getElementById('app-card-' + appId);
+            if (card) {
+                card.style.opacity = '.4';
+                card.style.pointerEvents = 'none';
+                card.querySelector('.status-chip').className = 'status-chip s-rejected';
+                card.querySelector('.status-chip').textContent = 'REJECTED';
+            }
+            setTimeout(() => window.location.reload(), 900);
+        } else {
+            showToast('Error: ' + (data.error || 'Failed'));
+        }
+        btn.disabled = false; btn.textContent = '✕ CONFIRM REJECT';
+    })
+    .catch(() => { showToast('Connection error.'); btn.disabled = false; btn.textContent = '✕ CONFIRM REJECT'; });
+}
+document.getElementById('rejectModal').addEventListener('click', function(e) {
+    if (e.target === this) closeRejectModal();
+});
+
+
+function revokeMod(modId, name, btn) {
+    if (!confirm(`Revoke moderator status from ${name}?`)) return;
+    btn.disabled = true; btn.textContent = '⏳...';
+    fetch('{% url "sc_revoke_moderator" %}', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+        body: JSON.stringify({ mod_id: modId }),
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.ok) {
+            showToast(name + "'s moderator access revoked.");
+            const row = document.getElementById('mod-row-' + modId);
+            if (row) { row.style.opacity = '.3'; row.style.pointerEvents = 'none'; }
+            setTimeout(() => window.location.reload(), 900);
+        } else {
+            showToast('Error: ' + (data.error || 'Failed'));
+            btn.disabled = false; btn.textContent = '✕ REVOKE';
+        }
+    })
+    .catch(() => { showToast('Connection error.'); btn.disabled = false; btn.textContent = '✕ REVOKE'; });
+}
+
+
+function removeListing(listingId, title, btn) {
+    const reason = prompt(`Reason for removing "${title}"? (optional)`);
+    if (reason === null) return;  
+    btn.disabled = true; btn.textContent = '⏳...';
+    fetch('{% url "sc_staff_remove_listing" %}', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+        body: JSON.stringify({ listing_id: listingId, reason }),
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.ok) {
+            showToast('Listing removed.');
+            const row = document.getElementById('list-row-' + listingId);
+            if (row) { row.style.opacity = '.3'; row.style.pointerEvents = 'none'; }
+        } else {
+            showToast('Error: ' + (data.error || 'Failed'));
+            btn.disabled = false; btn.textContent = '✕ REMOVE';
+        }
+    })
+    .catch(() => { showToast('Connection error.'); btn.disabled = false; btn.textContent = '✕ REMOVE'; });
+}
+
+{% if pending_apps %}
+{% endif %}
+</script>
+</body>
+</html>
